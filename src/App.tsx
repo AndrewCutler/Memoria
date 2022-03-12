@@ -20,11 +20,6 @@ export const App = () => {
 	const [started, setStarted] = React.useState<boolean>(false);
 	const [text, setText] = React.useState<string>('');
 	const [initials, setInitials] = React.useState<string[]>([]);
-	const [guesses, setGuesses] = React.useState<string>();
-
-	const handleGuesses = (value: string): void => {
-		console.log(value);
-	};
 
 	const handleTextPaste = (value: string): void => {
 		setText(value);
@@ -39,6 +34,11 @@ export const App = () => {
 
 	const handleReset = (): void => {
 		setStarted(false);
+	};
+
+	const handleComplete = (): void => {
+		setStarted(false);
+		console.log('Retry');
 	};
 
 	return (
@@ -56,26 +56,11 @@ export const App = () => {
 								displayed. Repeat until you've memorized it!
 							</Box>
 							<Flex align='flex-end' direction='column' mt={2}>
-								{/* {started ? (
-									<HiddenTextarea
-										initials={initials}
-										text={text}
-									/>
-								) : (
-									<Textarea
-										onChange={({ target: { value } }) =>
-											handleTextPaste(value)
-										}
-										placeholder='Paste text here'
-										isDisabled={started}
-										color={started ? 'black' : 'current'}
-										bg={started ? 'black' : 'inherit'}
-									/>
-								)} */}
 								{started && (
 									<HiddenTextarea
 										initials={initials}
 										text={text}
+										onComplete={handleComplete}
 									/>
 								)}
 								<Textarea

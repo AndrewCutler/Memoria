@@ -1,15 +1,22 @@
 import { Box } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 
+type Outcome = 'CORRECT' | 'INCORRECT';
+
 const HiddenTextarea = ({
 	initials,
-	text
+	text,
+	onComplete
 }: {
 	initials: string[];
 	text: string;
+	onComplete: () => void;
 }): React.ReactElement => {
 	const divRef = useRef<any>(null);
 
+	// const [outcomes, setOutcomes] = useState<Outcome[]>([]);
+	const [index, setIndex] = useState<number>(0);
+	const [guesses, setGuesses] = useState<Map<string, Outcome | undefined>>();
 	const [formattedText, setFormattedText] = useState<string[]>([]);
 
 	const focusDiv = (): void => {
@@ -17,8 +24,17 @@ const HiddenTextarea = ({
 	};
 
 	const handleKeyPress = (key: string): void => {
-		console.log(key);
+		const isCorrect = key.toLowerCase() === initials[index];
+		// setOutcomes((prev) => [...prev, isCorrect ? 'CORRECT' : 'INCORRECT']);
+		setIndex((prev) => ++prev);
+		console.log(formattedText[index]);
 	};
+
+	useEffect(() => {
+		if (index === initials.length) {
+			onComplete();
+		}
+	}, [index, initials, onComplete]);
 
 	useEffect(() => {
 		focusDiv();
@@ -33,6 +49,10 @@ const HiddenTextarea = ({
 		// remove the last element (always unnecessary ' ')
 		formatted.length--;
 		setFormattedText(formatted);
+		const guessMap = new Map<string, Outcome | undefined>(
+			formatted.map((word, index) => [`${word}_${index}`, undefined])
+		);
+		setGuesses(guessMap);
 	}, [text]);
 
 	return (
@@ -59,12 +79,20 @@ const HiddenTextarea = ({
 			}}
 		>
 			{formattedText.map((word, index) => {
+				const key = `${word}_${index}`;
+				console.log(guesses?.get(key));
+
 				return (
 					<span
-						style={{ color: true ? 'red' : 'green' }}
-						key={`${word}_${index}`}
+						style={{
+							color:
+								guesses?.get(key) === 'INCORRECT'
+									? 'red'
+									: 'green'
+						}}
+						key={key}
 					>
-						{word}
+						{guesses?.get(key) ? word : ''}
 					</span>
 				);
 			})}
