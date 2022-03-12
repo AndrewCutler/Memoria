@@ -1,38 +1,97 @@
-import * as React from "react"
+import * as React from 'react';
 import {
-  ChakraProvider,
-  Box,
-  Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
-  theme,
-} from "@chakra-ui/react"
-import { ColorModeSwitcher } from "./ColorModeSwitcher"
-import { Logo } from "./Logo"
+	ChakraProvider,
+	Box,
+	Text,
+	Link,
+	VStack,
+	Code,
+	Grid,
+	theme,
+	Textarea,
+	Flex,
+	Button,
+	Input
+} from '@chakra-ui/react';
+import { ColorModeSwitcher } from './ColorModeSwitcher';
+import HiddenTextarea from './ActiveTextarea';
 
-export const App = () => (
-  <ChakraProvider theme={theme}>
-    <Box textAlign="center" fontSize="xl">
-      <Grid minH="100vh" p={3}>
-        <ColorModeSwitcher justifySelf="flex-end" />
-        <VStack spacing={8}>
-          <Logo h="40vmin" pointerEvents="none" />
-          <Text>
-            Edit <Code fontSize="xl">src/App.tsx</Code> and save to reload.
-          </Text>
-          <Link
-            color="teal.500"
-            href="https://chakra-ui.com"
-            fontSize="2xl"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn Chakra
-          </Link>
-        </VStack>
-      </Grid>
-    </Box>
-  </ChakraProvider>
-)
+export const App = () => {
+	const [started, setStarted] = React.useState<boolean>(false);
+	const [text, setText] = React.useState<string>('');
+	const [initials, setInitials] = React.useState<string[]>([]);
+	const [guesses, setGuesses] = React.useState<string>();
+
+	const handleGuesses = (value: string): void => {
+		console.log(value);
+	};
+
+	React.useEffect(() => {
+		console.log(initials);
+	}, [initials]);
+
+	const handleTextPaste = (value: string): void => {
+		setText(value);
+	};
+
+	const handleStart = (): void => {
+		setStarted(true);
+		setInitials(
+			text.split(/\s+/).map((word) => word.charAt(0).toLowerCase())
+		);
+	};
+
+	const handleReset = (): void => {
+		setStarted(false);
+	};
+
+	return (
+		<ChakraProvider theme={theme}>
+			<Box textAlign='center' fontSize='xl'>
+				<Grid minH='100vh' p={3}>
+					<ColorModeSwitcher justifySelf='flex-end' />
+					<VStack spacing={8}>
+						<Box minH='10vh'>
+							<h6>How it works</h6>
+							<Box fontSize='sm' px='15%'>
+								Paste your desired text into the box. Then,
+								enter the first letter of each word as you
+								remember it. If correct, the word will be
+								displayed. Repeat until you've memorized it!
+							</Box>
+							<Flex align='flex-end' direction='column' mt={2}>
+								{started ? (
+									<HiddenTextarea />
+								) : (
+									<Textarea
+										onChange={({ target: { value } }) =>
+											handleTextPaste(value)
+										}
+										placeholder='Paste text here'
+										isDisabled={started}
+										color={started ? 'black' : 'current'}
+										bg={started ? 'black' : 'inherit'}
+									/>
+								)}
+								<Box my={3}>
+									{started && (
+										<Button onClick={handleReset}>
+											Reset
+										</Button>
+									)}
+									<Button
+										ml={1}
+										onClick={handleStart}
+										disabled={started || !text.trim()}
+									>
+										Start
+									</Button>
+								</Box>
+							</Flex>
+						</Box>
+					</VStack>
+				</Grid>
+			</Box>
+		</ChakraProvider>
+	);
+};
