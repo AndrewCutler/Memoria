@@ -26,10 +26,6 @@ export const App = () => {
 		console.log(value);
 	};
 
-	React.useEffect(() => {
-		console.log(initials);
-	}, [initials]);
-
 	const handleTextPaste = (value: string): void => {
 		setText(value);
 	};
@@ -60,8 +56,11 @@ export const App = () => {
 								displayed. Repeat until you've memorized it!
 							</Box>
 							<Flex align='flex-end' direction='column' mt={2}>
-								{started ? (
-									<HiddenTextarea />
+								{/* {started ? (
+									<HiddenTextarea
+										initials={initials}
+										text={text}
+									/>
 								) : (
 									<Textarea
 										onChange={({ target: { value } }) =>
@@ -72,7 +71,22 @@ export const App = () => {
 										color={started ? 'black' : 'current'}
 										bg={started ? 'black' : 'inherit'}
 									/>
+								)} */}
+								{started && (
+									<HiddenTextarea
+										initials={initials}
+										text={text}
+									/>
 								)}
+								<Textarea
+									onChange={({ target: { value } }) =>
+										handleTextPaste(value)
+									}
+									placeholder='Paste text here'
+									isDisabled={started}
+									color={started ? 'black' : 'current'}
+									bg={started ? 'black' : 'inherit'}
+								/>
 								<Box my={3}>
 									{started && (
 										<Button onClick={handleReset}>
