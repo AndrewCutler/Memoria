@@ -2,16 +2,12 @@ import * as React from 'react';
 import {
 	ChakraProvider,
 	Box,
-	Text,
-	Link,
 	VStack,
-	Code,
 	Grid,
 	theme,
 	Textarea,
 	Flex,
-	Button,
-	Input
+	Button
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 import HiddenTextarea from './ActiveTextarea';
@@ -19,7 +15,6 @@ import HiddenTextarea from './ActiveTextarea';
 export const App = () => {
 	const [started, setStarted] = React.useState<boolean>(false);
 	const [text, setText] = React.useState<string>('');
-	const [initials, setInitials] = React.useState<string[]>([]);
 
 	const handleTextPaste = (value: string): void => {
 		setText(value);
@@ -27,9 +22,6 @@ export const App = () => {
 
 	const handleStart = (): void => {
 		setStarted(true);
-		setInitials(
-			text.split(/\s+/).map((word) => word.charAt(0).toLowerCase())
-		);
 	};
 
 	const handleReset = (): void => {
@@ -58,7 +50,6 @@ export const App = () => {
 							<Flex align='flex-end' direction='column' mt={2}>
 								{started && (
 									<HiddenTextarea
-										initials={initials}
 										text={text}
 										onComplete={handleComplete}
 									/>

@@ -1,22 +1,17 @@
 import { Box } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 
-type Outcome = 'CORRECT' | 'INCORRECT';
-
 const HiddenTextarea = ({
-	initials,
 	text,
 	onComplete
 }: {
-	initials: string[];
 	text: string;
 	onComplete: () => void;
 }): React.ReactElement => {
 	const divRef = useRef<any>(null);
 
-	// const [outcomes, setOutcomes] = useState<Outcome[]>([]);
 	const [index, setIndex] = useState<number>(0);
-	const [guesses, setGuesses] = useState<Map<string, Outcome | undefined>>();
+	const [guesses, setGuesses] = useState<boolean[]>([]);
 	const [formattedText, setFormattedText] = useState<string[]>([]);
 
 	const focusDiv = (): void => {
@@ -24,35 +19,23 @@ const HiddenTextarea = ({
 	};
 
 	const handleKeyPress = (key: string): void => {
-		const isCorrect = key.toLowerCase() === initials[index];
-		// setOutcomes((prev) => [...prev, isCorrect ? 'CORRECT' : 'INCORRECT']);
+		const isCorrect = key.toLowerCase() === formattedText[index].charAt(0);
+		setGuesses((prev) => [...prev, isCorrect]);
 		setIndex((prev) => ++prev);
-		console.log(formattedText[index]);
 	};
 
 	useEffect(() => {
-		if (index === initials.length) {
+		if (index && index === formattedText.length) {
 			onComplete();
 		}
-	}, [index, initials, onComplete]);
+	}, [index, formattedText, onComplete]);
 
 	useEffect(() => {
 		focusDiv();
 	}, []);
 
 	useEffect(() => {
-		//  TODO: remove initials prop, calculate it here
-		// then reduce on initials
-		const formatted = text
-			.split(/\s+/)
-			.reduce((prev: string[], curr: string) => [...prev, curr, ' '], []);
-		// remove the last element (always unnecessary ' ')
-		formatted.length--;
-		setFormattedText(formatted);
-		const guessMap = new Map<string, Outcome | undefined>(
-			formatted.map((word, index) => [`${word}_${index}`, undefined])
-		);
-		setGuesses(guessMap);
+		setFormattedText(text.split(/\s+/));
 	}, [text]);
 
 	return (
@@ -78,21 +61,17 @@ const HiddenTextarea = ({
 				border: '1px solid var(--chakra-colors-whiteAlpha-300)'
 			}}
 		>
-			{formattedText.map((word, index) => {
+			{formattedText.slice(0, index).map((word, index) => {
 				const key = `${word}_${index}`;
-				console.log(guesses?.get(key));
 
 				return (
 					<span
 						style={{
-							color:
-								guesses?.get(key) === 'INCORRECT'
-									? 'red'
-									: 'green'
+							color: guesses[index] ? 'green' : 'red'
 						}}
 						key={key}
 					>
-						{guesses?.get(key) ? word : ''}
+						{word + ' '}
 					</span>
 				);
 			})}
