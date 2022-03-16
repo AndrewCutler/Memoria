@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, chakra } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 
 const HiddenTextarea = ({
@@ -65,14 +65,12 @@ const HiddenTextarea = ({
 				const key = `${word}_${index}`;
 
 				return (
-					<span
-						style={{
-							color: guesses[index] ? 'green' : 'red'
-						}}
+					<chakra.span
+						color={guesses[index] ? 'green.400' : 'red.400'}
 						key={key}
 					>
 						{word + ' '}
-					</span>
+					</chakra.span>
 				);
 			})}
 		</Box>
