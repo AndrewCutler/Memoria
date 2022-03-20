@@ -13,32 +13,40 @@ import { ColorModeSwitcher } from './ColorModeSwitcher';
 import HiddenTextarea from './ActiveTextarea';
 import Results from './Results';
 
+export type GameState = 'PENDING' | 'IN PROGRESS' | 'COMPLETE';
+
+
+
 export const App = () => {
-	const [started, setStarted] = React.useState<boolean>(false);
+	const [gameState, setGameState] = React.useState<GameState>('PENDING');
 	const [text, setText] = React.useState<string>('');
-	const [isComplete, setIsComplete] = React.useState<boolean>(false);
 	const [results, setResults] = React.useState<boolean[]>([]);
+
+	const pending = gameState === 'PENDING';
+	const started = gameState === 'IN PROGRESS';
+	const completed = gameState === 'COMPLETE';
 
 	const handleTextPaste = (value: string): void => {
 		setText(value);
 	};
 
 	const handleStart = (): void => {
-		setStarted(true);
+		setGameState('IN PROGRESS');
 	};
 
 	const handleRestart = (): void => {
-		console.log('restart');
+		setGameState('PENDING');
 	};
 
 	const handleReset = (): void => {
-		setStarted(false);
+		setGameState('PENDING');
+		setText('');
 	};
 
 	const handleComplete = (results: boolean[]): void => {
 		// setStarted(false);
 		setResults(results);
-		setIsComplete(true);
+		setGameState('COMPLETE');
 		console.log('Retry');
 	};
 
@@ -59,7 +67,7 @@ export const App = () => {
 							<Flex align='flex-end' direction='column' mt={2}>
 								{started ? (
 									<HiddenTextarea
-										text={text}
+										text={text.trim()}
 										onComplete={handleComplete}
 									/>
 								) : (
@@ -97,7 +105,7 @@ export const App = () => {
 										</Button>
 									)}
 								</Box>
-								{isComplete && <Results results={results} />}
+								{completed && <Results results={results} />}
 							</Flex>
 						</Box>
 					</VStack>
