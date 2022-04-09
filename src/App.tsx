@@ -1,32 +1,34 @@
-import * as React from 'react';
+import React from 'react';
 import {
 	ChakraProvider,
 	Box,
 	VStack,
-	Grid,
 	theme,
 	Textarea,
 	Flex,
 	Button
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
-import HiddenTextarea from './ActiveTextarea';
+import ActiveTextarea from './ActiveTextarea';
 import Results from './Results';
+import TextDisplay from './TextDisplay';
 
 export type GameState = 'PENDING' | 'IN PROGRESS' | 'COMPLETE';
-
-
 
 export const App = () => {
 	const [gameState, setGameState] = React.useState<GameState>('PENDING');
 	const [text, setText] = React.useState<string>('');
-	const [results, setResults] = React.useState<boolean[]>([]);
+
+	const [index, setIndex] = React.useState<number>(0);
+	const [guesses, setGuesses] = React.useState<boolean[]>([]);
+	const [formattedText, setFormattedText] = React.useState<string[]>([]);
+	// const [isComplete, setIsComplete] = React.useState<boolean>(false);
 
 	const pending = gameState === 'PENDING';
-	const started = gameState === 'IN PROGRESS';
+	const inProgress = gameState === 'IN PROGRESS';
 	const completed = gameState === 'COMPLETE';
 
-	const handleTextPaste = (value: string): void => {
+	const handleTextChange = (value: string): void => {
 		setText(value);
 	};
 
@@ -35,19 +37,48 @@ export const App = () => {
 	};
 
 	const handleRestart = (): void => {
-		setGameState('PENDING');
+		setGuesses([]);
+		setIndex(0);
+		setGameState('IN PROGRESS');
+	};
+
+	React.useEffect(() => {
+		setFormattedText(text.split(/\s+/));
+		setGuesses([]);
+		setIndex(0);
+		console.log(text);
+	}, [text]);
+
+	React.useEffect(() => {
+		console.log(gameState);
+	}, [pending, inProgress, completed]);
+
+	const handleComplete = (): void => {
+		setGameState('COMPLETE');
+		// setIsComplete(true);
+	};
+
+	React.useEffect(() => {
+		if (index && index === formattedText.length) {
+			handleComplete();
+		}
+	}, [index, formattedText]);
+
+	const handleKeyPress = (key: string): void => {
+		console.log(key);
+		if (!completed) {
+			// if (!isComplete) {
+			// TODO: pass guesses and index to App.tsx, which should store all state
+			const isCorrect =
+				key.toLowerCase() === formattedText[index].charAt(0);
+			setGuesses((prev) => [...prev, isCorrect]);
+			setIndex((prev) => ++prev);
+		}
 	};
 
 	const handleReset = (): void => {
 		setGameState('PENDING');
 		setText('');
-	};
-
-	const handleComplete = (results: boolean[]): void => {
-		// setStarted(false);
-		setResults(results);
-		setGameState('COMPLETE');
-		console.log('Retry');
 	};
 
 	return (
@@ -65,24 +96,31 @@ export const App = () => {
 								it's wrong. Repeat until you've memorized it!
 							</Box>
 							<Flex align='flex-end' direction='column' mt={2}>
-								{started ? (
-									<HiddenTextarea
-										text={text.trim()}
-										onComplete={handleComplete}
-									/>
+								{inProgress || completed ? (
+									<ActiveTextarea
+										// isComplete={isComplete}
+										isComplete={completed}
+										onKeyPress={handleKeyPress}
+									>
+										<TextDisplay
+											text={formattedText}
+											guesses={guesses}
+											index={index}
+										/>
+									</ActiveTextarea>
 								) : (
 									<Textarea
 										onChange={({ target: { value } }) =>
-											handleTextPaste(value)
+											handleTextChange(value)
 										}
 										placeholder='Paste text here'
-										isDisabled={started}
-										color={started ? 'black' : 'current'}
-										bg={started ? 'black' : 'inherit'}
+										isDisabled={inProgress}
+										color={inProgress ? 'black' : 'current'}
+										bg={inProgress ? 'black' : 'inherit'}
 									/>
 								)}
 								<Box my={3}>
-									{started && (
+									{(inProgress || completed) && (
 										<>
 											<Button onClick={handleReset}>
 												Reset
@@ -95,17 +133,19 @@ export const App = () => {
 											</Button>
 										</>
 									)}
-									{!started && (
+									{pending && (
 										<Button
 											ml={1}
 											onClick={handleStart}
-											disabled={started || !text.trim()}
+											disabled={
+												inProgress || !text.trim()
+											}
 										>
 											Start
 										</Button>
 									)}
 								</Box>
-								{completed && <Results results={results} />}
+								{completed && <Results results={guesses} />}
 							</Flex>
 						</Box>
 					</VStack>

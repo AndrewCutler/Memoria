@@ -10,7 +10,7 @@ const Results = ({ results }: { results: boolean[] }): React.ReactElement => {
 		setResultText(
 			`${correct} / ${
 				results.length
-			} correct, for a ${correctPercentage.toPrecision(2)}% success rate.`
+			} correct, for a ${correctPercentage.toPrecision(3)}% success rate.`
 		);
 	}, [results]);
 
