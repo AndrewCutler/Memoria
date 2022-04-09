@@ -22,7 +22,6 @@ export const App = () => {
 	const [index, setIndex] = React.useState<number>(0);
 	const [guesses, setGuesses] = React.useState<boolean[]>([]);
 	const [formattedText, setFormattedText] = React.useState<string[]>([]);
-	// const [isComplete, setIsComplete] = React.useState<boolean>(false);
 
 	const pending = gameState === 'PENDING';
 	const inProgress = gameState === 'IN PROGRESS';
@@ -46,16 +45,10 @@ export const App = () => {
 		setFormattedText(text.split(/\s+/));
 		setGuesses([]);
 		setIndex(0);
-		console.log(text);
 	}, [text]);
-
-	React.useEffect(() => {
-		console.log(gameState);
-	}, [pending, inProgress, completed]);
 
 	const handleComplete = (): void => {
 		setGameState('COMPLETE');
-		// setIsComplete(true);
 	};
 
 	React.useEffect(() => {
@@ -66,11 +59,10 @@ export const App = () => {
 
 	const handleKeyPress = (key: string): void => {
 		console.log(key);
-		if (!completed) {
-			// if (!isComplete) {
-			// TODO: pass guesses and index to App.tsx, which should store all state
+		if (!completed && key.match(/\w/)) {
 			const isCorrect =
-				key.toLowerCase() === formattedText[index].charAt(0);
+				key.toLowerCase() ===
+				formattedText[index].charAt(0).toLowerCase();
 			setGuesses((prev) => [...prev, isCorrect]);
 			setIndex((prev) => ++prev);
 		}
