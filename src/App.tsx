@@ -87,10 +87,9 @@ export const App = () => {
 								remember it. Green means it's right, red means
 								it's wrong. Repeat until you've memorized it!
 							</Box>
-							<Flex align='flex-end' direction='column' mt={2}>
+							<Flex align='flex-end' direction='column' mt={4}>
 								{inProgress || completed ? (
 									<ActiveTextarea
-										// isComplete={isComplete}
 										isComplete={completed}
 										onKeyPress={handleKeyPress}
 									>
