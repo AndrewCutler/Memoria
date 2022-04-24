@@ -58,7 +58,6 @@ export const App = () => {
 	}, [index, formattedText]);
 
 	const handleKeyPress = (key: string): void => {
-		console.log(key);
 		if (!completed && key.match(/\w/)) {
 			const isCorrect =
 				key.toLowerCase() ===
