@@ -89,7 +89,7 @@ export const App = () => {
 							<Flex align='flex-end' direction='column' mt={4}>
 								{inProgress || completed ? (
 									<ActiveTextarea
-										isComplete={completed}
+										gameState={gameState}
 										onKeyPress={handleKeyPress}
 									>
 										<TextDisplay
