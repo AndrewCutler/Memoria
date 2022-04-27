@@ -13,6 +13,8 @@ import ActiveTextarea from './ActiveTextarea';
 import Results from './Results';
 import TextDisplay from './TextDisplay';
 
+export const isValidKestroke = (key: string) => key.match(/\w/);
+
 export type GameState = 'PENDING' | 'IN PROGRESS' | 'COMPLETE';
 
 export const App = () => {
@@ -22,7 +24,6 @@ export const App = () => {
 	const [index, setIndex] = React.useState<number>(0);
 	const [guesses, setGuesses] = React.useState<boolean[]>([]);
 	const [formattedText, setFormattedText] = React.useState<string[]>([]);
-	// const [isComplete, setIsComplete] = React.useState<boolean>(false);
 
 	const pending = gameState === 'PENDING';
 	const inProgress = gameState === 'IN PROGRESS';
@@ -46,16 +47,10 @@ export const App = () => {
 		setFormattedText(text.split(/\s+/));
 		setGuesses([]);
 		setIndex(0);
-		console.log(text);
 	}, [text]);
-
-	React.useEffect(() => {
-		console.log(gameState);
-	}, [pending, inProgress, completed]);
 
 	const handleComplete = (): void => {
 		setGameState('COMPLETE');
-		// setIsComplete(true);
 	};
 
 	React.useEffect(() => {
@@ -65,12 +60,10 @@ export const App = () => {
 	}, [index, formattedText]);
 
 	const handleKeyPress = (key: string): void => {
-		console.log(key);
-		if (!completed) {
-			// if (!isComplete) {
-			// TODO: pass guesses and index to App.tsx, which should store all state
+		if (!completed && isValidKestroke(key)) {
 			const isCorrect =
-				key.toLowerCase() === formattedText[index].charAt(0);
+				key.toLowerCase() ===
+				formattedText[index].charAt(0).toLowerCase();
 			setGuesses((prev) => [...prev, isCorrect]);
 			setIndex((prev) => ++prev);
 		}
@@ -95,11 +88,10 @@ export const App = () => {
 								remember it. Green means it's right, red means
 								it's wrong. Repeat until you've memorized it!
 							</Box>
-							<Flex align='flex-end' direction='column' mt={2}>
+							<Flex align='flex-end' direction='column' mt={4}>
 								{inProgress || completed ? (
 									<ActiveTextarea
-										// isComplete={isComplete}
-										isComplete={completed}
+										gameState={gameState}
 										onKeyPress={handleKeyPress}
 									>
 										<TextDisplay
