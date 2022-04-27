@@ -13,6 +13,8 @@ import ActiveTextarea from './ActiveTextarea';
 import Results from './Results';
 import TextDisplay from './TextDisplay';
 
+export const isValidKestroke = (key: string) => key.match(/\w/);
+
 export type GameState = 'PENDING' | 'IN PROGRESS' | 'COMPLETE';
 
 export const App = () => {
@@ -58,7 +60,7 @@ export const App = () => {
 	}, [index, formattedText]);
 
 	const handleKeyPress = (key: string): void => {
-		if (!completed && key.match(/\w/)) {
+		if (!completed && isValidKestroke(key)) {
 			const isCorrect =
 				key.toLowerCase() ===
 				formattedText[index].charAt(0).toLowerCase();

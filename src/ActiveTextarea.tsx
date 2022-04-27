@@ -1,6 +1,6 @@
 import { Box, Input, useColorModeValue } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
-import { GameState } from './App';
+import { GameState, isValidKestroke } from './App';
 
 const HiddenTextarea = ({
 	gameState,
@@ -19,12 +19,16 @@ const HiddenTextarea = ({
 	const [letters, setLetters] = useState<string[]>([]);
 
 	const focusElement = (): void => {
+		elRef?.current?.click();
 		elRef?.current?.focus();
 	};
 
-	const handleKeyPress = (key: string): void => {
-		onKeyPress(key);
-		setLetters((prev) => [...prev, key]);
+	const handleChange = (value: string): void => {
+		const last = value.at(-1) ?? '';
+		if (isValidKestroke(last)) {
+			onKeyPress(last);
+			setLetters((prev) => [...prev, last]);
+		}
 	};
 
 	useEffect(() => {
@@ -38,11 +42,10 @@ const HiddenTextarea = ({
 		<>
 			<Input
 				ref={elRef}
-				onKeyPress={({ key }) => handleKeyPress(key)}
+				onChange={({ target: { value } }) => handleChange(value)}
 				disabled={gameState === 'COMPLETE'}
 				mb={3}
 				value={letters.join(' ')}
-				readOnly
 				type='text'
 			/>
 			<Box
