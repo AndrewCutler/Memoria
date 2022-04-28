@@ -3,15 +3,15 @@ import {
 	ChakraProvider,
 	Box,
 	VStack,
-	theme,
 	Textarea,
 	Flex,
-	Button
+	Button,
+	extendTheme
 } from '@chakra-ui/react';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
 import ActiveTextarea from './ActiveTextarea';
 import Results from './Results';
 import TextDisplay from './TextDisplay';
+import Title from './Title';
 
 export const isValidKestroke = (key: string) => key.match(/\w/);
 
@@ -28,6 +28,12 @@ export const App = () => {
 	const pending = gameState === 'PENDING';
 	const inProgress = gameState === 'IN PROGRESS';
 	const completed = gameState === 'COMPLETE';
+
+	const theme = extendTheme({
+		fonts: {
+			body: 'Inconsolata, sans-serif'
+		}
+	});
 
 	const handleTextChange = (value: string): void => {
 		setText(value);
@@ -76,12 +82,11 @@ export const App = () => {
 
 	return (
 		<ChakraProvider theme={theme}>
+			<Title />
 			<Box textAlign='center' fontSize='xl'>
 				<Box minH='100vh' p={3}>
-					<ColorModeSwitcher justifySelf='flex-end' />
 					<VStack spacing={8}>
 						<Box minH='10vh'>
-							<h6>How it works</h6>
 							<Box fontSize='sm' px='15%'>
 								Paste your desired text into the box. Then,
 								enter the first letter of each word as you
@@ -105,7 +110,7 @@ export const App = () => {
 										onChange={({ target: { value } }) =>
 											handleTextChange(value)
 										}
-										placeholder='Paste text here'
+										placeholder='Four score and seven years ago...'
 										isDisabled={inProgress}
 										color={inProgress ? 'black' : 'current'}
 										bg={inProgress ? 'black' : 'inherit'}
