@@ -6,12 +6,15 @@ import {
 	Textarea,
 	Flex,
 	Button,
-	extendTheme
+	extendTheme,
+	Divider
 } from '@chakra-ui/react';
 import ActiveTextarea from './ActiveTextarea';
 import Results from './Results';
 import TextDisplay from './TextDisplay';
 import Title from './Title';
+import InformationalAccordion from './InformationalAccordion';
+import InformationalTabset from './InformationalTabset';
 
 export const isValidKestroke = (key: string) => key.match(/\w/);
 
@@ -88,7 +91,7 @@ export const App = () => {
 					<VStack spacing={8}>
 						<Box minH='10vh'>
 							<Box fontSize='sm' px='15%'>
-								Paste your desired text into the box. Then,
+								Enter your desired text into the box. Then,
 								enter the first letter of each word as you
 								remember it. Green means it's right, red means
 								it's wrong. Repeat until you've memorized it!
@@ -145,6 +148,9 @@ export const App = () => {
 								{completed && <Results results={guesses} />}
 							</Flex>
 						</Box>
+						<Box h='16px' w='100%' />
+						<Divider />
+						<InformationalTabset />
 					</VStack>
 				</Box>
 			</Box>
