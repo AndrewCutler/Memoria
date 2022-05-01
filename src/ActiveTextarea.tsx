@@ -50,9 +50,9 @@ const HiddenTextarea = ({
 					value={letters.join(' ')}
 					type='text'
 				/>
-				<Tooltip label='Click to share this text'>
-					<Share />
-				</Tooltip>
+				{/* <Tooltip label='Click to share this text'> */}
+				<Share />
+				{/* </Tooltip> */}
 			</Flex>
 			<Box
 				tabIndex={0}

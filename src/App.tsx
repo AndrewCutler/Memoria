@@ -7,20 +7,30 @@ import {
 	Flex,
 	Button,
 	extendTheme,
-	Divider
+	Text,
+	Divider,
+	Alert,
+	AlertIcon
 } from '@chakra-ui/react';
 import ActiveTextarea from './ActiveTextarea';
 import Results from './Results';
 import TextDisplay from './TextDisplay';
 import Title from './Title';
-import InformationalAccordion from './InformationalAccordion';
+import { GoCheck } from 'react-icons/go';
+import { MdClear } from 'react-icons/md';
 import InformationalTabset from './InformationalTabset';
+import aes from 'crypto-js/aes';
+import enc from 'crypto-js/enc-utf8';
+import { HiRefresh } from 'react-icons/hi';
 
 export const isValidKestroke = (key: string) => key.match(/\w/);
 
 export type GameState = 'PENDING' | 'IN PROGRESS' | 'COMPLETE';
 
 export const App = () => {
+	const [queryParams, setQueryParams] = React.useState<any>();
+	const [hasInvalidParamsError, setHasInvalidParamsError] =
+		React.useState<boolean>(false);
 	const [gameState, setGameState] = React.useState<GameState>('PENDING');
 	const [text, setText] = React.useState<string>('');
 
@@ -58,6 +68,25 @@ export const App = () => {
 		setIndex(0);
 	}, [text]);
 
+	React.useEffect(() => {
+		const params = new URLSearchParams(window.location.search);
+		setQueryParams(params as any);
+	}, []);
+
+	React.useEffect(() => {
+		const target = queryParams?.get('target');
+		if (target) {
+			console.log(aes.decrypt(target, 'memoria_app'));
+			const decrypted = aes.decrypt(target, 'memoria_app').toString(enc);
+			console.log('params: ', decrypted);
+			if (decrypted.trim()) {
+				// set to text, start game
+			} else {
+				setHasInvalidParamsError(true);
+			}
+		}
+	}, [queryParams]);
+
 	const handleComplete = (): void => {
 		setGameState('COMPLETE');
 	};
@@ -90,6 +119,17 @@ export const App = () => {
 				<Box minH='100vh' p={3}>
 					<VStack spacing={8}>
 						<Box minH='10vh'>
+							{hasInvalidParamsError && (
+								<Alert
+									status='error'
+									fontSize='sm'
+									borderRadius='5px'
+									mb={2}
+								>
+									<AlertIcon />
+									Received text in an invalid format.
+								</Alert>
+							)}
 							<Box fontSize='sm' px='15%'>
 								Enter your desired text into the box. Then,
 								enter the first letter of each word as you
@@ -123,13 +163,15 @@ export const App = () => {
 									{(inProgress || completed) && (
 										<>
 											<Button onClick={handleReset}>
-												Reset
+												<Text mr='4px'>Reset</Text>
+												<MdClear />
 											</Button>
 											<Button
 												ml={1}
 												onClick={handleRestart}
 											>
-												Restart
+												<Text mr='4px'>Restart</Text>
+												<HiRefresh />
 											</Button>
 										</>
 									)}
@@ -141,7 +183,8 @@ export const App = () => {
 												inProgress || !text.trim()
 											}
 										>
-											Start
+											<Text mr='4px'>Start</Text>
+											<GoCheck />
 										</Button>
 									)}
 								</Box>
