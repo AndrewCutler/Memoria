@@ -1,17 +1,28 @@
-import { forwardRef, IconButton } from '@chakra-ui/react';
+import { forwardRef, IconButton, useToast } from '@chakra-ui/react';
 import React from 'react';
 import { FaShareAlt } from 'react-icons/fa';
 import aes from 'crypto-js/aes';
-import enc from 'crypto-js/enc-utf8';
 
 const secret = 'memoria_app';
 
 const Share = forwardRef(({ ...rest }, ref): React.ReactElement => {
+	const toast = useToast();
+
 	const handleShare = () => {
 		const encrypted = aes.encrypt('test string', secret).toString();
-		console.log(encrypted);
+		const url = `${window.location.origin}?target=${encrypted}`;
+		console.log(url);
+		navigator.clipboard.writeText(url);
+		toast({
+			description: 'URL copied',
+			status: 'success',
+			duration: 1500,
+			isClosable: true,
+			position: 'top-right'
+		});
 	};
 
+	// TODO: move to somewhere visible before Start is clicked
 	return (
 		<IconButton
 			size='md'

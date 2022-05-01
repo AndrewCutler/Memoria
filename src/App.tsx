@@ -10,7 +10,9 @@ import {
 	Text,
 	Divider,
 	Alert,
-	AlertIcon
+	AlertIcon,
+	CloseButton,
+	AlertDescription
 } from '@chakra-ui/react';
 import ActiveTextarea from './ActiveTextarea';
 import Results from './Results';
@@ -75,12 +77,14 @@ export const App = () => {
 
 	React.useEffect(() => {
 		const target = queryParams?.get('target');
+		// http://localhost:3000?target=U2FsdGVkX18rdMaD2zTx/HrhDKv4MF7l+jnFNmLdFVo=
+		// core.js:523 Uncaught Error: Malformed UTF-8 data
 		if (target) {
 			console.log(aes.decrypt(target, 'memoria_app'));
 			const decrypted = aes.decrypt(target, 'memoria_app').toString(enc);
 			console.log('params: ', decrypted);
 			if (decrypted.trim()) {
-				// set to text, start game
+				handleTextChange(decrypted);
 			} else {
 				setHasInvalidParamsError(true);
 			}
@@ -126,8 +130,21 @@ export const App = () => {
 									borderRadius='5px'
 									mb={2}
 								>
-									<AlertIcon />
-									Received text in an invalid format.
+									<Flex flex={1}>
+										<AlertIcon />
+										<AlertDescription>
+											Received text in an invalid format.
+										</AlertDescription>
+									</Flex>
+									<CloseButton
+										alignSelf='flex-end'
+										position='relative'
+										right={-1}
+										top={-1}
+										onClick={() =>
+											setHasInvalidParamsError(false)
+										}
+									/>
 								</Alert>
 							)}
 							<Box fontSize='sm' px='15%'>
@@ -153,6 +170,7 @@ export const App = () => {
 										onChange={({ target: { value } }) =>
 											handleTextChange(value)
 										}
+										value={text}
 										placeholder='Four score and seven years ago...'
 										isDisabled={inProgress}
 										color={inProgress ? 'black' : 'current'}
