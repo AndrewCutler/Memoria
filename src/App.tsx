@@ -21,8 +21,6 @@ import Title from './Title';
 import { GoCheck } from 'react-icons/go';
 import { MdClear } from 'react-icons/md';
 import InformationalTabset from './InformationalTabset';
-import aes from 'crypto-js/aes';
-import enc from 'crypto-js/enc-utf8';
 import { HiRefresh } from 'react-icons/hi';
 
 export const isValidKestroke = (key: string) => key.match(/\w/);
@@ -80,11 +78,8 @@ export const App = () => {
 		// http://localhost:3000?target=U2FsdGVkX18rdMaD2zTx/HrhDKv4MF7l+jnFNmLdFVo=
 		// core.js:523 Uncaught Error: Malformed UTF-8 data
 		if (target) {
-			console.log(aes.decrypt(target, 'memoria_app'));
-			const decrypted = aes.decrypt(target, 'memoria_app').toString(enc);
-			console.log('params: ', decrypted);
-			if (decrypted.trim()) {
-				handleTextChange(decrypted);
+			if (''.trim()) {
+				handleTextChange('');
 			} else {
 				setHasInvalidParamsError(true);
 			}
