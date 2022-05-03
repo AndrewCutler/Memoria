@@ -1,4 +1,4 @@
-import { Box, Flex, Input, Tooltip, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, Input, useColorModeValue } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { GameState, isValidKestroke } from './App';
 import Share from './Share';
@@ -6,10 +6,12 @@ import Share from './Share';
 const HiddenTextarea = ({
 	gameState,
 	onKeyPress,
+	text,
 	children
 }: {
 	gameState: GameState;
 	onKeyPress: (key: string) => void;
+	text: string;
 	children: any;
 }): React.ReactElement => {
 	const elRef = useRef<any>(null);
@@ -51,7 +53,7 @@ const HiddenTextarea = ({
 					type='text'
 				/>
 				{/* <Tooltip label='Click to share this text'> */}
-				<Share />
+				<Share text={text} />
 				{/* </Tooltip> */}
 			</Flex>
 			<Box
