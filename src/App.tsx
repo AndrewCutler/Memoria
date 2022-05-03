@@ -46,6 +46,13 @@ export const App = () => {
 	const theme = extendTheme({
 		fonts: {
 			body: 'Inconsolata, sans-serif'
+		},
+		components: {
+			Link: {
+				baseStyle: {
+					textDecoration: 'underline'
+				}
+			}
 		}
 	});
 
