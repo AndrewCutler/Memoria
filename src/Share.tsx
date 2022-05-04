@@ -1,4 +1,4 @@
-import { forwardRef, IconButton, useToast } from '@chakra-ui/react';
+import { forwardRef, IconButton, Tooltip, useToast } from '@chakra-ui/react';
 import React from 'react';
 import { FaShareAlt } from 'react-icons/fa';
 import { encrypt } from './crypt';
@@ -7,7 +7,6 @@ const Share = forwardRef(({ ...rest }, ref): React.ReactElement => {
 	const toast = useToast();
 
 	const handleShare = () => {
-		console.log(rest);
 		const hex = encrypt(rest.text);
 		const url = `${window.location.origin}?target=${hex}`;
 		navigator.clipboard.writeText(url);
@@ -20,20 +19,21 @@ const Share = forwardRef(({ ...rest }, ref): React.ReactElement => {
 		});
 	};
 
-	// TODO: move to somewhere visible before Start is clicked
 	return (
-		<IconButton
-			size='md'
-			fontSize='lg'
-			variant='ghost'
-			color='current'
-			marginLeft='2'
-			onClick={handleShare}
-			icon={<FaShareAlt />}
-			aria-label='Share this text with someone else for them to memorize it'
-			ref={ref}
-			{...rest}
-		/>
+		<Tooltip label='Share this text for someone else to practice it'>
+			<IconButton
+				size='md'
+				fontSize='lg'
+				variant='ghost'
+				color='current'
+				marginLeft='1'
+				onClick={handleShare}
+				icon={<FaShareAlt />}
+				aria-label='Share this text with someone else for them to memorize it'
+				ref={ref}
+				{...rest}
+			/>
+		</Tooltip>
 	);
 });
 

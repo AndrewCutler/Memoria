@@ -23,8 +23,16 @@ import { MdClear } from 'react-icons/md';
 import InformationalTabset from './InformationalTabset';
 import { HiRefresh } from 'react-icons/hi';
 import { decrypt } from './crypt';
+import Share from './Share';
 
 export const isValidKestroke = (key: string) => key.match(/\w/);
+const validateMaxWordLength = (text: string): boolean => {
+	// a very imperfect calculation, at the very least because it counts punctuation as a word but we'll go with it
+	const MAX_WORD_COUNT = 500;
+	const wordCount = text.split(/(\w+)/).filter((w) => w.trim()).length;
+
+	return wordCount <= MAX_WORD_COUNT;
+};
 
 export type GameState = 'PENDING' | 'IN PROGRESS' | 'COMPLETE';
 
@@ -34,7 +42,7 @@ export const App = () => {
 		React.useState<boolean>(false);
 	const [gameState, setGameState] = React.useState<GameState>('PENDING');
 	const [text, setText] = React.useState<string>('');
-
+	const [isValid, setIsValid] = React.useState<boolean>(true);
 	const [index, setIndex] = React.useState<number>(0);
 	const [guesses, setGuesses] = React.useState<boolean[]>([]);
 	const [formattedText, setFormattedText] = React.useState<string[]>([]);
@@ -57,7 +65,11 @@ export const App = () => {
 	});
 
 	const handleTextChange = (value: string): void => {
-		setText(value);
+		const isValid = validateMaxWordLength(value);
+		setIsValid(isValid);
+		if (isValid) {
+			setText(value);
+		}
 	};
 
 	const handleStart = (): void => {
@@ -160,7 +172,6 @@ export const App = () => {
 									<ActiveTextarea
 										gameState={gameState}
 										onKeyPress={handleKeyPress}
-										text={text}
 									>
 										<TextDisplay
 											text={formattedText}
@@ -173,6 +184,7 @@ export const App = () => {
 										onChange={({ target: { value } }) =>
 											handleTextChange(value)
 										}
+										isInvalid={!isValid}
 										value={text}
 										placeholder='Four score and seven years ago...'
 										isDisabled={inProgress}
@@ -198,7 +210,6 @@ export const App = () => {
 									)}
 									{pending && (
 										<Button
-											ml={1}
 											onClick={handleStart}
 											disabled={
 												inProgress || !text.trim()
@@ -208,6 +219,7 @@ export const App = () => {
 											<GoCheck />
 										</Button>
 									)}
+									{text.trim() && <Share text={text} />}
 								</Box>
 								{completed && <Results results={guesses} />}
 							</Flex>

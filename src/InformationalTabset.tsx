@@ -13,7 +13,6 @@ import {
 	useColorModeValue
 } from '@chakra-ui/react';
 import React from 'react';
-import { FaTablets } from 'react-icons/fa';
 
 const InformationalTabset = (): React.ReactElement => {
 	const borderColor = useColorModeValue(
@@ -31,6 +30,7 @@ const InformationalTabset = (): React.ReactElement => {
 			<TabList>
 				<Tab>About</Tab>
 				<Tab>Tips</Tab>
+				<Tab>☕</Tab>
 			</TabList>
 			<TabPanels>
 				<TabPanel>
@@ -119,6 +119,14 @@ const InformationalTabset = (): React.ReactElement => {
 						</strong>{' '}
 						Engage your brain!
 					</Text>
+				</TabPanel>
+				<TabPanel>
+					<Box>
+						<Link href='https://ko-fi.com/andrewcutler' isExternal>
+							Buy me a coffee?
+						</Link>{' '}
+						❤️
+					</Box>
 				</TabPanel>
 			</TabPanels>
 		</Tabs>
