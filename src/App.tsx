@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	ChakraProvider,
 	Box,
@@ -25,27 +25,22 @@ import { HiRefresh } from 'react-icons/hi';
 import { decrypt } from './crypt';
 import Share from './Share';
 
-export const isValidKestroke = (key: string) => key.match(/\w/);
-const validateMaxWordLength = (text: string): boolean => {
-	// a very imperfect calculation, at the very least because it counts punctuation as a word but we'll go with it
-	const MAX_WORD_COUNT = 500;
-	const wordCount = text.split(/(\w+)/).filter((w) => w.trim()).length;
+const MAX_LENGTH = 1000;
 
-	return wordCount <= MAX_WORD_COUNT;
-};
+export const isValidKestroke = (key: string) => key.match(/\w/);
 
 export type GameState = 'PENDING' | 'IN PROGRESS' | 'COMPLETE';
 
 export const App = () => {
-	const [queryParams, setQueryParams] = React.useState<any>();
+	const [queryParams, setQueryParams] = useState<any>();
 	const [hasInvalidParamsError, setHasInvalidParamsError] =
-		React.useState<boolean>(false);
-	const [gameState, setGameState] = React.useState<GameState>('PENDING');
-	const [text, setText] = React.useState<string>('');
-	const [isValid, setIsValid] = React.useState<boolean>(true);
-	const [index, setIndex] = React.useState<number>(0);
-	const [guesses, setGuesses] = React.useState<boolean[]>([]);
-	const [formattedText, setFormattedText] = React.useState<string[]>([]);
+		useState<boolean>(false);
+	const [gameState, setGameState] = useState<GameState>('PENDING');
+	const [text, setText] = useState<string>('');
+	const [isMaxLength, setIsMaxLength] = useState<boolean>(false);
+	const [index, setIndex] = useState<number>(0);
+	const [guesses, setGuesses] = useState<boolean[]>([]);
+	const [formattedText, setFormattedText] = useState<string[]>([]);
 
 	const pending = gameState === 'PENDING';
 	const inProgress = gameState === 'IN PROGRESS';
@@ -65,11 +60,10 @@ export const App = () => {
 	});
 
 	const handleTextChange = (value: string): void => {
-		const isValid = validateMaxWordLength(value);
-		setIsValid(isValid);
-		if (isValid) {
-			setText(value);
-		}
+		const isMaxLength = value.length === MAX_LENGTH;
+		setIsMaxLength(isMaxLength);
+		console.log(isMaxLength, value.length);
+		setText(value);
 	};
 
 	const handleStart = (): void => {
@@ -184,17 +178,33 @@ export const App = () => {
 										onChange={({ target: { value } }) =>
 											handleTextChange(value)
 										}
-										isInvalid={!isValid}
+										isInvalid={isMaxLength}
 										value={text}
 										placeholder='Four score and seven years ago...'
 										isDisabled={inProgress}
+										maxLength={MAX_LENGTH}
 										color={inProgress ? 'black' : 'current'}
 										bg={inProgress ? 'black' : 'inherit'}
 									/>
 								)}
-								<Box my={3}>
+								<Flex
+									my={3}
+									w='100%'
+									justifyContent='space-between'
+								>
+									<Box>
+										{isMaxLength && (
+											<Text
+												fontSize='xs'
+												color='gray.400'
+											>
+												Very ambitious, but there's a{' '}
+												{MAX_LENGTH} character limit
+											</Text>
+										)}
+									</Box>
 									{(inProgress || completed) && (
-										<>
+										<Box>
 											<Button onClick={handleReset}>
 												<Text mr='4px'>Reset</Text>
 												<MdClear />
@@ -206,21 +216,28 @@ export const App = () => {
 												<Text mr='4px'>Restart</Text>
 												<HiRefresh />
 											</Button>
-										</>
+											{text.trim() && (
+												<Share text={text} />
+											)}
+										</Box>
 									)}
 									{pending && (
-										<Button
-											onClick={handleStart}
-											disabled={
-												inProgress || !text.trim()
-											}
-										>
-											<Text mr='4px'>Start</Text>
-											<GoCheck />
-										</Button>
+										<Box>
+											<Button
+												onClick={handleStart}
+												disabled={
+													inProgress || !text.trim()
+												}
+											>
+												<Text mr='4px'>Start</Text>
+												<GoCheck />
+											</Button>
+											{text.trim() && (
+												<Share text={text} />
+											)}
+										</Box>
 									)}
-									{text.trim() && <Share text={text} />}
-								</Box>
+								</Flex>
 								{completed && <Results results={guesses} />}
 							</Flex>
 						</Box>
