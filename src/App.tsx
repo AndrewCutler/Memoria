@@ -62,7 +62,6 @@ export const App = () => {
 	const handleTextChange = (value: string): void => {
 		const isMaxLength = value.length === MAX_LENGTH;
 		setIsMaxLength(isMaxLength);
-		console.log(isMaxLength, value.length);
 		setText(value);
 	};
 

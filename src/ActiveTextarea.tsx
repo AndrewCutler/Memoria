@@ -24,7 +24,7 @@ const HiddenTextarea = ({
 	};
 
 	const handleChange = (value: string): void => {
-		const last = value.at(-1) ?? '';
+		const last = value.charAt(value.length - 1) ?? '';
 		if (isValidKestroke(last)) {
 			onKeyPress(last);
 			setLetters((prev) => [...prev, last]);
