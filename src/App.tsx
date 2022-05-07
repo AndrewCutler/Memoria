@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	ChakraProvider,
 	Box,
@@ -24,6 +24,7 @@ import InformationalTabset from './InformationalTabset';
 import { HiRefresh } from 'react-icons/hi';
 import { decrypt } from './crypt';
 import Share from './Share';
+import { v4 as uuid } from 'uuid';
 
 const MAX_LENGTH = 1000;
 
@@ -41,6 +42,8 @@ export const App = () => {
 	const [index, setIndex] = useState<number>(0);
 	const [guesses, setGuesses] = useState<boolean[]>([]);
 	const [formattedText, setFormattedText] = useState<string[]>([]);
+	const [currentUuid, setCurrentUuid] = useState<string>('');
+	const [key, setKey] = useState<string>('');
 
 	const pending = gameState === 'PENDING';
 	const inProgress = gameState === 'IN PROGRESS';
@@ -67,6 +70,7 @@ export const App = () => {
 
 	const handleStart = (): void => {
 		setGameState('IN PROGRESS');
+		setCurrentUuid(uuid());
 	};
 
 	const handleRestart = (): void => {
@@ -75,18 +79,25 @@ export const App = () => {
 		setGameState('IN PROGRESS');
 	};
 
-	React.useEffect(() => {
+	const handleReset = (): void => {
+		// fix this
+		setGameState('PENDING');
+		setText('');
+		setCurrentUuid('');
+	};
+
+	useEffect(() => {
 		setFormattedText(text.split(/\s+/));
 		setGuesses([]);
 		setIndex(0);
 	}, [text]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
 		setQueryParams(params as any);
 	}, []);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const param = queryParams?.get('target');
 		if (param) {
 			const target = decrypt(param);
@@ -98,15 +109,14 @@ export const App = () => {
 		}
 	}, [queryParams]);
 
-	const handleComplete = (): void => {
-		setGameState('COMPLETE');
-	};
-
-	React.useEffect(() => {
+	useEffect(() => {
 		if (index && index === formattedText.length) {
-			handleComplete();
+			setGameState('COMPLETE');
+			const timestamp = new Date().valueOf();
+			const key = `${currentUuid}_${timestamp}`;
+			setKey(key);
 		}
-	}, [index, formattedText]);
+	}, [index, formattedText, currentUuid]);
 
 	const handleKeyPress = (key: string): void => {
 		if (!completed && isValidKestroke(key)) {
@@ -116,11 +126,6 @@ export const App = () => {
 			setGuesses((prev) => [...prev, isCorrect]);
 			setIndex((prev) => ++prev);
 		}
-	};
-
-	const handleReset = (): void => {
-		setGameState('PENDING');
-		setText('');
 	};
 
 	return (
@@ -170,6 +175,8 @@ export const App = () => {
 											text={formattedText}
 											guesses={guesses}
 											index={index}
+											storageKey={key}
+											completed={completed}
 										/>
 									</ActiveTextarea>
 								) : (
