@@ -25,6 +25,7 @@ import { HiRefresh } from 'react-icons/hi';
 import { decrypt } from './crypt';
 import Share from './Share';
 import { v4 as uuid } from 'uuid';
+import History from './History';
 
 const MAX_LENGTH = 1000;
 
@@ -39,6 +40,7 @@ export const App = () => {
 	const [gameState, setGameState] = useState<GameState>('PENDING');
 	const [text, setText] = useState<string>('');
 	const [isMaxLength, setIsMaxLength] = useState<boolean>(false);
+	const [showHistory, setShowHistory] = useState<boolean>(false);
 	const [index, setIndex] = useState<number>(0);
 	const [guesses, setGuesses] = useState<boolean[]>([]);
 	const [formattedText, setFormattedText] = useState<string[]>([]);
@@ -165,6 +167,9 @@ export const App = () => {
 								remember it. Green means it's right, red means
 								it's wrong. Repeat until you've memorized it!
 							</Box>
+							<Button onClick={() => setShowHistory(true)}>
+								Show history
+							</Button>
 							<Flex align='flex-end' direction='column' mt={4}>
 								{inProgress || completed ? (
 									<ActiveTextarea
@@ -247,6 +252,7 @@ export const App = () => {
 								{completed && <Results results={guesses} />}
 							</Flex>
 						</Box>
+						{showHistory && <History />}
 						<Box h='16px' w='100%' />
 						<Divider />
 						<InformationalTabset />
