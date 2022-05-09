@@ -38,12 +38,12 @@ export const App = () => {
 	const [hasInvalidParamsError, setHasInvalidParamsError] =
 		useState<boolean>(false);
 	const [gameState, setGameState] = useState<GameState>('PENDING');
-	const [text, setText] = useState<string>('');
+	const [targetText, setTargetText] = useState<string>('');
 	const [isMaxLength, setIsMaxLength] = useState<boolean>(false);
 	const [showHistory, setShowHistory] = useState<boolean>(false);
 	const [index, setIndex] = useState<number>(0);
 	const [guesses, setGuesses] = useState<boolean[]>([]);
-	const [formattedText, setFormattedText] = useState<string[]>([]);
+	const [targetTextWords, setTargetTextWords] = useState<string[]>([]);
 	const [currentUuid, setCurrentUuid] = useState<string>('');
 	const [key, setKey] = useState<string>('');
 
@@ -67,7 +67,7 @@ export const App = () => {
 	const handleTextChange = (value: string): void => {
 		const isMaxLength = value.length === MAX_LENGTH;
 		setIsMaxLength(isMaxLength);
-		setText(value);
+		setTargetText(value);
 	};
 
 	const handleStart = (): void => {
@@ -84,15 +84,15 @@ export const App = () => {
 	const handleReset = (): void => {
 		// fix this
 		setGameState('PENDING');
-		setText('');
+		setTargetText('');
 		setCurrentUuid('');
 	};
 
 	useEffect(() => {
-		setFormattedText(text.split(/\s+/));
+		setTargetTextWords(targetText.split(/\s+/));
 		setGuesses([]);
 		setIndex(0);
-	}, [text]);
+	}, [targetText]);
 
 	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
@@ -112,19 +112,19 @@ export const App = () => {
 	}, [queryParams]);
 
 	useEffect(() => {
-		if (index && index === formattedText.length) {
+		if (index && index === targetTextWords.length) {
 			setGameState('COMPLETE');
 			const timestamp = new Date().valueOf();
 			const key = `${currentUuid}_${timestamp}`;
 			setKey(key);
 		}
-	}, [index, formattedText, currentUuid]);
+	}, [index, targetTextWords, currentUuid]);
 
 	const handleKeyPress = (key: string): void => {
 		if (!completed && isValidKestroke(key)) {
 			const isCorrect =
 				key.toLowerCase() ===
-				formattedText[index].charAt(0).toLowerCase();
+				targetTextWords[index].charAt(0).toLowerCase();
 			setGuesses((prev) => [...prev, isCorrect]);
 			setIndex((prev) => ++prev);
 		}
@@ -177,7 +177,7 @@ export const App = () => {
 										onKeyPress={handleKeyPress}
 									>
 										<TextDisplay
-											text={formattedText}
+											text={targetTextWords}
 											guesses={guesses}
 											index={index}
 											storageKey={key}
@@ -190,7 +190,7 @@ export const App = () => {
 											handleTextChange(value)
 										}
 										isInvalid={isMaxLength}
-										value={text}
+										value={targetText}
 										placeholder='Four score and seven years ago...'
 										isDisabled={inProgress}
 										maxLength={MAX_LENGTH}
@@ -227,8 +227,8 @@ export const App = () => {
 												<Text mr='4px'>Restart</Text>
 												<HiRefresh />
 											</Button>
-											{text.trim() && (
-												<Share text={text} />
+											{targetText.trim() && (
+												<Share text={targetText} />
 											)}
 										</Box>
 									)}
@@ -237,14 +237,15 @@ export const App = () => {
 											<Button
 												onClick={handleStart}
 												disabled={
-													inProgress || !text.trim()
+													inProgress ||
+													!targetText.trim()
 												}
 											>
 												<Text mr='4px'>Start</Text>
 												<GoCheck />
 											</Button>
-											{text.trim() && (
-												<Share text={text} />
+											{targetText.trim() && (
+												<Share text={targetText} />
 											)}
 										</Box>
 									)}

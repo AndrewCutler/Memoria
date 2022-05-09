@@ -3,7 +3,6 @@ import {
 	Divider,
 	Flex,
 	Link,
-	Stack,
 	Tab,
 	TabList,
 	TabPanel,
