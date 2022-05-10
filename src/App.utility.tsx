@@ -1,0 +1,33 @@
+import { createContext, SetStateAction, useCallback, useState } from 'react';
+
+export const MAX_LENGTH = 1000;
+
+export const isValidKestroke = (key: string) => key.match(/\w/);
+
+export type GameState = 'PENDING' | 'IN PROGRESS' | 'COMPLETE';
+
+export interface IAppContext {
+	gameState: GameState;
+	targetText: string;
+	guesses: boolean[];
+	targetTextWords: string[];
+	index: number;
+}
+
+export const appContext: IAppContext = {
+	gameState: 'PENDING',
+	targetText: '',
+	guesses: [],
+	targetTextWords: [],
+	index: 0
+};
+
+interface IContext {
+	value: IAppContext;
+	setter: React.Dispatch<SetStateAction<IAppContext>>;
+}
+
+export const AppContext = createContext<IContext>({
+	value: appContext,
+	setter: (value: SetStateAction<IAppContext>) => {}
+});

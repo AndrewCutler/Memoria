@@ -1,6 +1,6 @@
 import { Box, Flex, Heading, Text } from '@chakra-ui/react';
 import React from 'react';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
+import { ColorModeSwitcher } from '../ColorModeSwitcher/ColorModeSwitcher';
 
 const Title = () => {
 	return (

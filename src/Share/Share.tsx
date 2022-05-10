@@ -1,7 +1,7 @@
 import { forwardRef, IconButton, Tooltip, useToast } from '@chakra-ui/react';
 import React from 'react';
 import { FaShareAlt } from 'react-icons/fa';
-import { encrypt } from './crypt';
+import { encrypt } from '../crypt';
 
 const Share = forwardRef(({ ...rest }, ref): React.ReactElement => {
 	const toast = useToast();
