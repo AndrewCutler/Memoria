@@ -1,13 +1,18 @@
 import { forwardRef, IconButton, Tooltip, useToast } from '@chakra-ui/react';
-import React from 'react';
+import React, { useContext } from 'react';
 import { FaShareAlt } from 'react-icons/fa';
+import { AppContext } from '../App.utility';
 import { encrypt } from '../crypt';
 
 const Share = forwardRef(({ ...rest }, ref): React.ReactElement => {
+	const {
+		value: { targetText }
+	} = useContext(AppContext);
 	const toast = useToast();
 
 	const handleShare = () => {
-		const hex = encrypt(rest.text);
+		const hex = encrypt(targetText);
+		// const hex = encrypt(rest.text);
 		const url = `${window.location.origin}?target=${hex}`;
 		navigator.clipboard.writeText(url);
 		toast({

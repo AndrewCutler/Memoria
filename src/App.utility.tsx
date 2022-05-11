@@ -1,4 +1,4 @@
-import { createContext, SetStateAction, useCallback, useState } from 'react';
+import { createContext, SetStateAction } from 'react';
 
 export const MAX_LENGTH = 1000;
 

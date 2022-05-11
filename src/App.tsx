@@ -39,12 +39,12 @@ export const App = () => {
 	const [hasInvalidParamsError, setHasInvalidParamsError] =
 		useState<boolean>(false);
 	const [gameState, setGameState] = useState<GameState>('PENDING');
-	const [targetText, setTargetText] = useState<string>('');
+	// const [targetText, setTargetText] = useState<string>('');
 	const [isMaxLength, setIsMaxLength] = useState<boolean>(false);
 	const [showHistory, setShowHistory] = useState<boolean>(false);
-	const [index, setIndex] = useState<number>(0);
-	const [guesses, setGuesses] = useState<boolean[]>([]);
-	const [targetTextWords, setTargetTextWords] = useState<string[]>([]);
+	// const [index, setIndex] = useState<number>(0);
+	// const [guesses, setGuesses] = useState<boolean[]>([]);
+	// const [targetTextWords, setTargetTextWords] = useState<string[]>([]);
 	const [currentUuid, setCurrentUuid] = useState<string>('');
 	const [key, setKey] = useState<string>('');
 
@@ -68,7 +68,11 @@ export const App = () => {
 	const handleTextChange = (value: string): void => {
 		const isMaxLength = value.length === MAX_LENGTH;
 		setIsMaxLength(isMaxLength);
-		setTargetText(value);
+		// setTargetText(value);
+		setContext((prev) => ({
+			...prev,
+			targetText: value
+		}));
 	};
 
 	const handleStart = (): void => {
@@ -77,23 +81,34 @@ export const App = () => {
 	};
 
 	const handleRestart = (): void => {
-		setGuesses([]);
-		setIndex(0);
+		// setGuesses([]);
+		setContext((prev) => ({ ...prev, index: 0, guesses: [] }));
+		// setIndex(0);
 		setGameState('IN PROGRESS');
 	};
 
 	const handleReset = (): void => {
 		// fix this
 		setGameState('PENDING');
-		setTargetText('');
+		// setTargetText('');
+		setContext((prev) => ({
+			...prev,
+			targetText: ''
+		}));
 		setCurrentUuid('');
 	};
 
 	useEffect(() => {
-		setTargetTextWords(targetText.split(/\s+/));
-		setGuesses([]);
-		setIndex(0);
-	}, [targetText]);
+		// setTargetTextWords(targetText.split(/\s+/));
+		setContext((prev) => ({
+			...prev,
+			index: 0,
+			guesses: [],
+			targetTextWords: context.targetText.split(/s+/)
+		}));
+		// setGuesses([]);
+		// setIndex(0);
+	}, [context.targetText]);
 
 	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
@@ -116,21 +131,26 @@ export const App = () => {
 	}, [queryParams]);
 
 	useEffect(() => {
-		if (index && index === targetTextWords.length) {
+		if (context.index && context.index === context.targetTextWords.length) {
 			setGameState('COMPLETE');
 			const timestamp = new Date().valueOf();
 			const key = `${currentUuid}_${timestamp}`;
 			setKey(key);
 		}
-	}, [index, targetTextWords, currentUuid]);
+	}, [context.index, context.targetTextWords, currentUuid]);
 
 	const handleKeyPress = (key: string): void => {
 		if (!completed && isValidKestroke(key)) {
 			const isCorrect =
 				key.toLowerCase() ===
-				targetTextWords[index].charAt(0).toLowerCase();
-			setGuesses((prev) => [...prev, isCorrect]);
-			setIndex((prev) => ++prev);
+				context.targetTextWords[context.index].charAt(0).toLowerCase();
+			// setGuesses((prev) => [...prev, isCorrect]);
+			setContext((prev) => ({
+				...prev,
+				index: ++prev.index,
+				guesses: [...prev.guesses, isCorrect]
+			}));
+			// setIndex((prev) => ++prev);
 		}
 	};
 
@@ -171,9 +191,12 @@ export const App = () => {
 											onKeyPress={handleKeyPress}
 										>
 											<TextDisplay
-												text={targetTextWords}
-												guesses={guesses}
-												index={index}
+												// remove prop
+												text={context.targetTextWords}
+												// remove prop
+												guesses={context.guesses}
+												// remove prop
+												index={context.index}
 												storageKey={key}
 												completed={completed}
 											/>
@@ -184,7 +207,7 @@ export const App = () => {
 												handleTextChange(value)
 											}
 											isInvalid={isMaxLength}
-											value={targetText}
+											value={context.targetText}
 											placeholder='Four score and seven years ago...'
 											isDisabled={inProgress}
 											maxLength={MAX_LENGTH}
@@ -228,8 +251,8 @@ export const App = () => {
 													</Text>
 													<HiRefresh />
 												</Button>
-												{targetText.trim() && (
-													<Share text={targetText} />
+												{context.targetText.trim() && (
+													<Share />
 												)}
 											</Box>
 										)}
@@ -239,19 +262,22 @@ export const App = () => {
 													onClick={handleStart}
 													disabled={
 														inProgress ||
-														!targetText.trim()
+														!context.targetText.trim()
 													}
 												>
 													<Text mr='4px'>Start</Text>
 													<GoCheck />
 												</Button>
-												{targetText.trim() && (
-													<Share text={targetText} />
+												{context.targetText.trim() && (
+													<Share />
 												)}
 											</Box>
 										)}
 									</Flex>
-									{completed && <Results results={guesses} />}
+									{/* remove prop */}
+									{completed && (
+										<Results results={context.guesses} />
+									)}
 								</Flex>
 							</Box>
 							{showHistory && <History />}
