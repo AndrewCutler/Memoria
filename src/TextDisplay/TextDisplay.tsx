@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import ReactDOMServer from 'react-dom/server';
+import { AppContext } from '../App.utility';
 
 const green = '#48bb78';
 const red = '#f56565';
@@ -11,22 +12,17 @@ export interface IStorageValue {
 }
 
 const TextDisplay = ({
-	text,
-	guesses,
-	index,
-	storageKey,
-	completed
+	storageKey
 }: {
-	text: string[];
-	guesses: boolean[];
-	index: number;
 	storageKey: string;
-	completed: boolean;
 }): React.ReactElement => {
+	const {
+		value: { targetTextWords, guesses, index, gameState }
+	} = useContext(AppContext);
 	const [displayText, setDisplayText] = useState<JSX.Element[]>([]);
 
 	useEffect(() => {
-		if (completed) {
+		if (gameState === 'COMPLETE') {
 			const final = <div>{[...displayText]}</div>;
 			const finalAsString = ReactDOMServer.renderToStaticMarkup(final);
 			localStorage.setItem(
@@ -38,10 +34,10 @@ const TextDisplay = ({
 				})
 			);
 		}
-	}, [completed, displayText, storageKey]);
+	}, [gameState, displayText, storageKey]);
 
 	useEffect(() => {
-		const result = text.slice(0, index).map((word, index) => {
+		const result = targetTextWords.slice(0, index).map((word, index) => {
 			const key = `${word}_${index}`;
 
 			// cannot use chakra styling syntax/variables as it compiles to stuff like class="css-1ou2t5u"
@@ -54,7 +50,7 @@ const TextDisplay = ({
 			return displayText;
 		});
 		setDisplayText(result);
-	}, [guesses, index, storageKey, text]);
+	}, [guesses, index, storageKey, targetTextWords]);
 
 	return <>{[...displayText]}</>;
 };

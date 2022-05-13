@@ -1,16 +1,17 @@
 import { Box, Flex, Input, useColorModeValue } from '@chakra-ui/react';
-import React, { useEffect, useRef, useState } from 'react';
-import { GameState, isValidKestroke } from '../App.utility';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { AppContext, isValidKestroke } from '../App.utility';
 
 const HiddenTextarea = ({
-	gameState,
 	onKeyPress,
 	children
 }: {
-	gameState: GameState;
 	onKeyPress: (key: string) => void;
 	children: any;
 }): React.ReactElement => {
+	const {
+		value: { gameState }
+	} = useContext(AppContext);
 	const elRef = useRef<any>(null);
 	const borderColor = useColorModeValue(
 		'var(--chakra-colors-gray-200)',

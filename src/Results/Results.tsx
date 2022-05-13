@@ -1,18 +1,22 @@
 import { Box } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { AppContext } from '../App.utility';
 
-const Results = ({ results }: { results: boolean[] }): React.ReactElement => {
+const Results = (): React.ReactElement => {
+	const {
+		value: { guesses }
+	} = useContext(AppContext);
 	const [resultText, setResultText] = useState<string>('');
 
 	useEffect(() => {
-		const correct = results.filter(Boolean).length;
-		const correctPercentage = (correct / results.length) * 100;
+		const correct = guesses.filter(Boolean).length;
+		const correctPercentage = (correct / guesses.length) * 100;
 		setResultText(
 			`${correct} / ${
-				results.length
+				guesses.length
 			} correct, for a ${correctPercentage.toPrecision(3)}% success rate.`
 		);
-	}, [results]);
+	}, [guesses]);
 
 	return <Box fontSize='1rem'>{resultText}</Box>;
 };

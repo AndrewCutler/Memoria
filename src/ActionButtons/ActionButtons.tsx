@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { AppContext, IAppContext } from '../App.utility';
+import { AppContext } from '../App.utility';
 
 const ActionButtons = (): React.ReactElement => {
 	const { value: context, setter: setContext } = useContext(AppContext);

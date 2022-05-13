@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	ChakraProvider,
 	Box,
@@ -39,12 +39,8 @@ export const App = () => {
 	const [hasInvalidParamsError, setHasInvalidParamsError] =
 		useState<boolean>(false);
 	const [gameState, setGameState] = useState<GameState>('PENDING');
-	// const [targetText, setTargetText] = useState<string>('');
 	const [isMaxLength, setIsMaxLength] = useState<boolean>(false);
 	const [showHistory, setShowHistory] = useState<boolean>(false);
-	// const [index, setIndex] = useState<number>(0);
-	// const [guesses, setGuesses] = useState<boolean[]>([]);
-	// const [targetTextWords, setTargetTextWords] = useState<string[]>([]);
 	const [currentUuid, setCurrentUuid] = useState<string>('');
 	const [key, setKey] = useState<string>('');
 
@@ -68,7 +64,6 @@ export const App = () => {
 	const handleTextChange = (value: string): void => {
 		const isMaxLength = value.length === MAX_LENGTH;
 		setIsMaxLength(isMaxLength);
-		// setTargetText(value);
 		setContext((prev) => ({
 			...prev,
 			targetText: value
@@ -81,16 +76,13 @@ export const App = () => {
 	};
 
 	const handleRestart = (): void => {
-		// setGuesses([]);
 		setContext((prev) => ({ ...prev, index: 0, guesses: [] }));
-		// setIndex(0);
 		setGameState('IN PROGRESS');
 	};
 
 	const handleReset = (): void => {
 		// fix this
 		setGameState('PENDING');
-		// setTargetText('');
 		setContext((prev) => ({
 			...prev,
 			targetText: ''
@@ -99,15 +91,12 @@ export const App = () => {
 	};
 
 	useEffect(() => {
-		// setTargetTextWords(targetText.split(/\s+/));
 		setContext((prev) => ({
 			...prev,
 			index: 0,
 			guesses: [],
 			targetTextWords: context.targetText.split(/s+/)
 		}));
-		// setGuesses([]);
-		// setIndex(0);
 	}, [context.targetText]);
 
 	useEffect(() => {
@@ -144,13 +133,11 @@ export const App = () => {
 			const isCorrect =
 				key.toLowerCase() ===
 				context.targetTextWords[context.index].charAt(0).toLowerCase();
-			// setGuesses((prev) => [...prev, isCorrect]);
 			setContext((prev) => ({
 				...prev,
 				index: ++prev.index,
 				guesses: [...prev.guesses, isCorrect]
 			}));
-			// setIndex((prev) => ++prev);
 		}
 	};
 
@@ -187,19 +174,9 @@ export const App = () => {
 								>
 									{inProgress || completed ? (
 										<ActiveTextarea
-											gameState={gameState}
 											onKeyPress={handleKeyPress}
 										>
-											<TextDisplay
-												// remove prop
-												text={context.targetTextWords}
-												// remove prop
-												guesses={context.guesses}
-												// remove prop
-												index={context.index}
-												storageKey={key}
-												completed={completed}
-											/>
+											<TextDisplay storageKey={key} />
 										</ActiveTextarea>
 									) : (
 										<Textarea
@@ -274,10 +251,7 @@ export const App = () => {
 											</Box>
 										)}
 									</Flex>
-									{/* remove prop */}
-									{completed && (
-										<Results results={context.guesses} />
-									)}
+									{completed && <Results />}
 								</Flex>
 							</Box>
 							{showHistory && <History />}
