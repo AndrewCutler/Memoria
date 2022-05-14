@@ -8,7 +8,7 @@ const red = '#f56565';
 export interface IStorageValue {
 	rendered: string;
 	text: string;
-	accuracy: number;
+	accuracy: string;
 }
 
 const TextDisplay = ({
@@ -17,7 +17,7 @@ const TextDisplay = ({
 	storageKey: string;
 }): React.ReactElement => {
 	const {
-		value: { targetTextWords, guesses, index, gameState }
+		value: { targetText, targetTextWords, guesses, index, gameState }
 	} = useContext(AppContext);
 	const [displayText, setDisplayText] = useState<JSX.Element[]>([]);
 
@@ -25,16 +25,19 @@ const TextDisplay = ({
 		if (gameState === 'COMPLETE') {
 			const final = <div>{[...displayText]}</div>;
 			const finalAsString = ReactDOMServer.renderToStaticMarkup(final);
+			// TODO: consider moving this to context as it is also calculated in Results.tsx
+			const correct = guesses.filter(Boolean).length;
+			const accuracy = ((correct / guesses.length) * 100).toPrecision(3);
 			localStorage.setItem(
 				storageKey,
 				JSON.stringify({
 					rendered: finalAsString,
-					text: 'TEST',
-					accuracy: 75
-				})
+					text: targetText,
+					accuracy
+				} as IStorageValue)
 			);
 		}
-	}, [gameState, displayText, storageKey]);
+	}, [gameState, displayText, storageKey, targetText, guesses]);
 
 	useEffect(() => {
 		const result = targetTextWords.slice(0, index).map((word, index) => {

@@ -10,11 +10,12 @@ const Results = (): React.ReactElement => {
 
 	useEffect(() => {
 		const correct = guesses.filter(Boolean).length;
-		const correctPercentage = (correct / guesses.length) * 100;
+		const correctPercentage = (
+			(correct / guesses.length) *
+			100
+		).toPrecision(3);
 		setResultText(
-			`${correct} / ${guesses.length} (${correctPercentage.toPrecision(
-				3
-			)}%) correct.`
+			`${correct} / ${guesses.length} (${correctPercentage}%) correct.`
 		);
 	}, [guesses]);
 

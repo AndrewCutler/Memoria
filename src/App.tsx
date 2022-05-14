@@ -99,9 +99,9 @@ export const App = () => {
 			Object.keys(localStorage).filter(isStorageKeyMatch)?.length > 0;
 		setHasHistory(hasKeysInStorage);
 
-		if (process.env.NODE_ENV === 'development') {
-			console.log(context);
-		}
+		// if (process.env.NODE_ENV === 'development') {
+		// 	console.log(context);
+		// }
 	}, [context]);
 
 	useEffect(() => {
@@ -153,13 +153,6 @@ export const App = () => {
 									means it's wrong. Repeat until you've
 									memorized it!
 								</Box>
-								{hasHistory && (
-									<Button
-										onClick={() => setShowHistory(true)}
-									>
-										Show history
-									</Button>
-								)}
 								<Flex
 									align='flex-end'
 									direction='column'
@@ -190,7 +183,7 @@ export const App = () => {
 										</ActiveTextarea>
 									)}
 									<Flex
-										my={3}
+										my={1}
 										w='100%'
 										justifyContent='space-between'
 									>
@@ -208,6 +201,22 @@ export const App = () => {
 										</Box>
 										<ActionButtons />
 									</Flex>
+									{/* TODO: change to accordion */}
+									{hasHistory && (
+										<Flex
+											my={1}
+											w='100%'
+											justifyContent='flex-end'
+										>
+											<Button
+												onClick={() =>
+													setShowHistory(!showHistory)
+												}
+											>
+												Show history
+											</Button>
+										</Flex>
+									)}
 									{completed && <Results />}
 								</Flex>
 							</Box>

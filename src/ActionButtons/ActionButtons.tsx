@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { GoCheck } from 'react-icons/go';
 import { HiRefresh } from 'react-icons/hi';
 import { MdClear } from 'react-icons/md';
-import { AppContext } from '../App.utility';
+import { appContext, AppContext } from '../App.utility';
 import Share from '../Share/Share';
 import { v4 as uuid } from 'uuid';
 
@@ -35,11 +35,8 @@ const ActionButtons = (): React.ReactElement => {
 
 	const handleClear = (): void => {
 		// fix this
-		setContext((prev) => ({
-			...prev,
-			targetText: '',
-			gameState: 'PENDING',
-			currentUuid: ''
+		setContext(() => ({
+			...appContext
 		}));
 	};
 
