@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 const storageKeyRegex =
 	/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}_[\d]{13}$/;
 
-const isStorageKeyMatch = (key: string) => storageKeyRegex.test(key);
+export const isStorageKeyMatch = (key: string) => storageKeyRegex.test(key);
 
 const History = () => {
 	const [history, setHistory] = useState<string[]>([]);

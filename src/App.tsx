@@ -22,7 +22,7 @@ import { HiRefresh } from 'react-icons/hi';
 import { decrypt } from './crypt';
 import Share from './Share/Share';
 import { v4 as uuid } from 'uuid';
-import History from './History/History';
+import History, { isStorageKeyMatch } from './History/History';
 import InvalidReceiptText from './InvalidReceiptText/InvalidReceiptText';
 import ActionButtons from './ActionButtons/ActionButtons';
 import {
@@ -35,10 +35,11 @@ import {
 
 export const App = () => {
 	const [context, setContext] = useState<IAppContext>(appContext);
-	const [queryParams, setQueryParams] = useState<any>();
+	const [queryParams, setQueryParams] = useState<URLSearchParams>();
 	const [hasInvalidParamsError, setHasInvalidParamsError] =
 		useState<boolean>(false);
 	const [isMaxLength, setIsMaxLength] = useState<boolean>(false);
+	const [hasHistory, setHasHistory] = useState<boolean>(false);
 	const [showHistory, setShowHistory] = useState<boolean>(false);
 	const [currentUuid, setCurrentUuid] = useState<string>('');
 	const [key, setKey] = useState<string>('');
@@ -104,7 +105,11 @@ export const App = () => {
 
 	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
-		setQueryParams(params as any);
+		setQueryParams(params);
+
+		const hasKeysInStorage =
+			Object.keys(localStorage).filter(isStorageKeyMatch)?.length > 0;
+		setHasHistory(hasKeysInStorage);
 	}, []);
 
 	useEffect(() => {
@@ -123,7 +128,7 @@ export const App = () => {
 	}, [queryParams]);
 
 	useEffect(() => {
-		if (context.index && context.index === context.targetTextWords.length) {
+		if (context.index === context.targetTextWords.length) {
 			setContext((prev) => ({ ...prev, gameState: 'COMPLETE' }));
 			const timestamp = new Date().valueOf();
 			const key = `${currentUuid}_${timestamp}`;
@@ -167,9 +172,13 @@ export const App = () => {
 									means it's wrong. Repeat until you've
 									memorized it!
 								</Box>
-								<Button onClick={() => setShowHistory(true)}>
-									Show history
-								</Button>
+								{hasHistory && (
+									<Button
+										onClick={() => setShowHistory(true)}
+									>
+										Show history
+									</Button>
+								)}
 								<Flex
 									align='flex-end'
 									direction='column'
