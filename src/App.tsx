@@ -8,7 +8,8 @@ import {
 	Button,
 	extendTheme,
 	Text,
-	Divider
+	Divider,
+	Tooltip
 } from '@chakra-ui/react';
 import ActiveTextarea from './ActiveTextArea/ActiveTextarea';
 import Results from './Results/Results';
@@ -27,7 +28,6 @@ import ActionButtons from './ActionButtons/ActionButtons';
 import {
 	appContext,
 	AppContext,
-	GameState,
 	IAppContext,
 	isValidKestroke,
 	MAX_LENGTH
@@ -38,15 +38,14 @@ export const App = () => {
 	const [queryParams, setQueryParams] = useState<any>();
 	const [hasInvalidParamsError, setHasInvalidParamsError] =
 		useState<boolean>(false);
-	const [gameState, setGameState] = useState<GameState>('PENDING');
 	const [isMaxLength, setIsMaxLength] = useState<boolean>(false);
 	const [showHistory, setShowHistory] = useState<boolean>(false);
 	const [currentUuid, setCurrentUuid] = useState<string>('');
 	const [key, setKey] = useState<string>('');
 
-	const pending = gameState === 'PENDING';
-	const inProgress = gameState === 'IN PROGRESS';
-	const completed = gameState === 'COMPLETE';
+	const pending = context.gameState === 'PENDING';
+	const inProgress = context.gameState === 'IN PROGRESS';
+	const completed = context.gameState === 'COMPLETE';
 
 	const theme = extendTheme({
 		fonts: {
@@ -71,21 +70,25 @@ export const App = () => {
 	};
 
 	const handleStart = (): void => {
-		setGameState('IN PROGRESS');
 		setCurrentUuid(uuid());
+		setContext((prev) => ({ ...prev, gameState: 'IN PROGRESS' }));
 	};
 
-	const handleRestart = (): void => {
-		setContext((prev) => ({ ...prev, index: 0, guesses: [] }));
-		setGameState('IN PROGRESS');
-	};
-
-	const handleReset = (): void => {
-		// fix this
-		setGameState('PENDING');
+	const handleRetry = (): void => {
 		setContext((prev) => ({
 			...prev,
-			targetText: ''
+			index: 0,
+			guesses: [],
+			gameState: 'IN PROGRESS'
+		}));
+	};
+
+	const handleClear = (): void => {
+		// fix this
+		setContext((prev) => ({
+			...prev,
+			targetText: '',
+			gameState: 'PENDING'
 		}));
 		setCurrentUuid('');
 	};
@@ -95,7 +98,7 @@ export const App = () => {
 			...prev,
 			index: 0,
 			guesses: [],
-			targetTextWords: context.targetText.split(/s+/)
+			targetTextWords: context.targetText.split(/\s+/)
 		}));
 	}, [context.targetText]);
 
@@ -121,7 +124,7 @@ export const App = () => {
 
 	useEffect(() => {
 		if (context.index && context.index === context.targetTextWords.length) {
-			setGameState('COMPLETE');
+			setContext((prev) => ({ ...prev, gameState: 'COMPLETE' }));
 			const timestamp = new Date().valueOf();
 			const key = `${currentUuid}_${timestamp}`;
 			setKey(key);
@@ -215,17 +218,21 @@ export const App = () => {
 										</Box>
 										{(inProgress || completed) && (
 											<Box>
-												<Button onClick={handleReset}>
-													<Text mr='4px'>Reset</Text>
-													<MdClear />
-												</Button>
+												<Tooltip label='Wipe out this text and try with a new one'>
+													<Button
+														onClick={handleClear}
+													>
+														<Text mr='4px'>
+															Clear
+														</Text>
+														<MdClear />
+													</Button>
+												</Tooltip>
 												<Button
 													ml={1}
-													onClick={handleRestart}
+													onClick={handleRetry}
 												>
-													<Text mr='4px'>
-														Restart
-													</Text>
+													<Text mr='4px'>Retry</Text>
 													<HiRefresh />
 												</Button>
 												{context.targetText.trim() && (
