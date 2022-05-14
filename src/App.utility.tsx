@@ -12,6 +12,7 @@ export interface IAppContext {
 	guesses: boolean[];
 	targetTextWords: string[];
 	index: number;
+	currentUuid: string;
 }
 
 export const appContext: IAppContext = {
@@ -19,7 +20,8 @@ export const appContext: IAppContext = {
 	targetText: '',
 	guesses: [],
 	targetTextWords: [],
-	index: 0
+	index: 0,
+	currentUuid: ''
 };
 
 interface IContext {

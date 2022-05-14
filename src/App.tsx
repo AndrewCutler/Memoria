@@ -8,20 +8,14 @@ import {
 	Button,
 	extendTheme,
 	Text,
-	Divider,
-	Tooltip
+	Divider
 } from '@chakra-ui/react';
 import ActiveTextarea from './ActiveTextArea/ActiveTextarea';
 import Results from './Results/Results';
 import TextDisplay from './TextDisplay/TextDisplay';
 import Title from './Title/Title';
-import { GoCheck } from 'react-icons/go';
-import { MdClear } from 'react-icons/md';
 import InformationalTabset from './InformationTabset/InformationalTabset';
-import { HiRefresh } from 'react-icons/hi';
 import { decrypt } from './crypt';
-import Share from './Share/Share';
-import { v4 as uuid } from 'uuid';
 import History, { isStorageKeyMatch } from './History/History';
 import InvalidReceiptText from './InvalidReceiptText/InvalidReceiptText';
 import ActionButtons from './ActionButtons/ActionButtons';
@@ -42,7 +36,6 @@ export const App = () => {
 	const [isMaxLength, setIsMaxLength] = useState<boolean>(false);
 	const [hasHistory, setHasHistory] = useState<boolean>(false);
 	const [showHistory, setShowHistory] = useState<boolean>(false);
-	const [currentUuid, setCurrentUuid] = useState<string>('');
 	const [key, setKey] = useState<string>('');
 
 	const pending = context.gameState === 'PENDING';
@@ -133,10 +126,10 @@ export const App = () => {
 		) {
 			setContext((prev) => ({ ...prev, gameState: 'COMPLETE' }));
 			const timestamp = new Date().valueOf();
-			const key = `${currentUuid}_${timestamp}`;
+			const key = `${context.currentUuid}_${timestamp}`;
 			setKey(key);
 		}
-	}, [context.index, context.targetTextWords, currentUuid]);
+	}, [context.index, context.targetTextWords, context.currentUuid]);
 
 	return (
 		<AppContext.Provider value={{ value: context, setter: setContext }}>

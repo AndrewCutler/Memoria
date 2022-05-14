@@ -5,6 +5,7 @@ import { HiRefresh } from 'react-icons/hi';
 import { MdClear } from 'react-icons/md';
 import { AppContext } from '../App.utility';
 import Share from '../Share/Share';
+import { v4 as uuid } from 'uuid';
 
 const ActionButtons = (): React.ReactElement => {
 	const {
@@ -16,8 +17,11 @@ const ActionButtons = (): React.ReactElement => {
 	const inProgress = gameState === 'IN PROGRESS';
 
 	const handleStart = (): void => {
-		// setCurrentUuid(uuid());
-		setContext((prev) => ({ ...prev, gameState: 'IN PROGRESS' }));
+		setContext((prev) => ({
+			...prev,
+			gameState: 'IN PROGRESS',
+			currentUuid: uuid()
+		}));
 	};
 
 	const handleRetry = (): void => {
@@ -34,9 +38,9 @@ const ActionButtons = (): React.ReactElement => {
 		setContext((prev) => ({
 			...prev,
 			targetText: '',
-			gameState: 'PENDING'
+			gameState: 'PENDING',
+			currentUuid: ''
 		}));
-		// setCurrentUuid('');
 	};
 
 	return (
