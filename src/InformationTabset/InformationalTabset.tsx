@@ -12,6 +12,7 @@ import {
 	useColorModeValue
 } from '@chakra-ui/react';
 import React from 'react';
+import Email from '../Email/Email';
 
 const InformationalTabset = (): React.ReactElement => {
 	const borderColor = useColorModeValue(
@@ -120,7 +121,9 @@ const InformationalTabset = (): React.ReactElement => {
 						Engage your brain!
 					</Text>
 				</TabPanel>
-				<TabPanel>{/* TODO: implement emailjs */}</TabPanel>
+				<TabPanel>
+					<Email />
+				</TabPanel>
 				<TabPanel>
 					<Box>
 						<Link href='https://ko-fi.com/andrewcutler' isExternal>
