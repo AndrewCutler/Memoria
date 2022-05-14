@@ -120,7 +120,7 @@ const InformationalTabset = (): React.ReactElement => {
 						Engage your brain!
 					</Text>
 				</TabPanel>
-				<TabPanel></TabPanel>
+				<TabPanel>{/* TODO: implement emailjs */}</TabPanel>
 				<TabPanel>
 					<Box>
 						<Link href='https://ko-fi.com/andrewcutler' isExternal>

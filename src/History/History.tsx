@@ -63,7 +63,7 @@ const History = () => {
 			<AccordionItem>
 				<AccordionButton>
 					<Box textAlign='left' flex='1'>
-						View history
+						View past attempts
 					</Box>
 					<AccordionIcon />
 				</AccordionButton>
