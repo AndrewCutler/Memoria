@@ -1,51 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	ChakraProvider,
 	Box,
 	VStack,
 	Textarea,
 	Flex,
-	Button,
 	extendTheme,
 	Text,
-	Divider,
-	Alert,
-	AlertIcon,
-	CloseButton,
-	AlertDescription
+	Divider
 } from '@chakra-ui/react';
-import ActiveTextarea from './ActiveTextarea';
-import Results from './Results';
-import TextDisplay from './TextDisplay';
-import Title from './Title';
-import { GoCheck } from 'react-icons/go';
-import { MdClear } from 'react-icons/md';
-import InformationalTabset from './InformationalTabset';
-import { HiRefresh } from 'react-icons/hi';
+import ActiveTextarea from './ActiveTextArea/ActiveTextarea';
+import TextDisplay from './TextDisplay/TextDisplay';
+import Title from './Title/Title';
+import InformationalTabset from './InformationTabset/InformationalTabset';
 import { decrypt } from './crypt';
-import Share from './Share';
-
-const MAX_LENGTH = 1000;
-
-export const isValidKestroke = (key: string) => key.match(/\w/);
-
-export type GameState = 'PENDING' | 'IN PROGRESS' | 'COMPLETE';
+import History, { isStorageKeyMatch } from './History/History';
+import InvalidReceiptText from './InvalidReceiptText/InvalidReceiptText';
+import ActionButtons from './ActionButtons/ActionButtons';
+import {
+	appContext,
+	AppContext,
+	IAppContext,
+	isValidKestroke,
+	MAX_LENGTH
+} from './App.utility';
 
 export const App = () => {
-	const [queryParams, setQueryParams] = useState<any>();
+	// app state
+	const [context, setContext] = useState<IAppContext>(appContext);
+	const [queryParams, setQueryParams] = useState<URLSearchParams>();
 	const [hasInvalidParamsError, setHasInvalidParamsError] =
 		useState<boolean>(false);
-	const [gameState, setGameState] = useState<GameState>('PENDING');
-	const [text, setText] = useState<string>('');
 	const [isMaxLength, setIsMaxLength] = useState<boolean>(false);
-	const [index, setIndex] = useState<number>(0);
-	const [guesses, setGuesses] = useState<boolean[]>([]);
-	const [formattedText, setFormattedText] = useState<string[]>([]);
+	const [hasHistory, setHasHistory] = useState<boolean>(false);
+	const [key, setKey] = useState<string>('');
 
-	const pending = gameState === 'PENDING';
-	const inProgress = gameState === 'IN PROGRESS';
-	const completed = gameState === 'COMPLETE';
+	const pending = context.gameState === 'PENDING';
+	const inProgress = context.gameState === 'IN PROGRESS';
+	const completed = context.gameState === 'COMPLETE';
 
+	// Chakra theme
 	const theme = extendTheme({
 		fonts: {
 			body: 'Inconsolata, sans-serif'
@@ -59,34 +53,55 @@ export const App = () => {
 		}
 	});
 
+	// event handlers
 	const handleTextChange = (value: string): void => {
 		const isMaxLength = value.length === MAX_LENGTH;
 		setIsMaxLength(isMaxLength);
-		setText(value);
+		setContext((prev) => ({
+			...prev,
+			targetText: value
+		}));
 	};
 
-	const handleStart = (): void => {
-		setGameState('IN PROGRESS');
+	const handleKeyPress = (key: string): void => {
+		if (!completed && isValidKestroke(key)) {
+			const isCorrect =
+				key.toLowerCase() ===
+				context.targetTextWords[context.index].charAt(0).toLowerCase();
+			setContext((prev) => ({
+				...prev,
+				index: ++prev.index,
+				guesses: [...prev.guesses, isCorrect]
+			}));
+		}
 	};
 
-	const handleRestart = (): void => {
-		setGuesses([]);
-		setIndex(0);
-		setGameState('IN PROGRESS');
-	};
-
-	React.useEffect(() => {
-		setFormattedText(text.split(/\s+/));
-		setGuesses([]);
-		setIndex(0);
-	}, [text]);
-
-	React.useEffect(() => {
+	// useEffects
+	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
-		setQueryParams(params as any);
+		setQueryParams(params);
 	}, []);
 
-	React.useEffect(() => {
+	useEffect(() => {
+		setContext((prev) => ({
+			...prev,
+			index: 0,
+			guesses: [],
+			targetTextWords: context.targetText.split(/\s+/).filter(Boolean)
+		}));
+	}, [context.targetText]);
+
+	useEffect(() => {
+		const hasKeysInStorage =
+			Object.keys(localStorage).filter(isStorageKeyMatch)?.length > 0;
+		setHasHistory(hasKeysInStorage);
+
+		// if (process.env.NODE_ENV === 'development') {
+		// 	console.log(context);
+		// }
+	}, [context]);
+
+	useEffect(() => {
 		const param = queryParams?.get('target');
 		if (param) {
 			const target = decrypt(param);
@@ -98,154 +113,99 @@ export const App = () => {
 		}
 	}, [queryParams]);
 
-	const handleComplete = (): void => {
-		setGameState('COMPLETE');
-	};
-
-	React.useEffect(() => {
-		if (index && index === formattedText.length) {
-			handleComplete();
+	useEffect(() => {
+		if (
+			context.index > 0 &&
+			context.index === context.targetTextWords.length
+		) {
+			setContext((prev) => ({ ...prev, gameState: 'COMPLETE' }));
+			const timestamp = new Date().valueOf();
+			const key = `${context.currentUuid}_${timestamp}`;
+			setKey(key);
 		}
-	}, [index, formattedText]);
-
-	const handleKeyPress = (key: string): void => {
-		if (!completed && isValidKestroke(key)) {
-			const isCorrect =
-				key.toLowerCase() ===
-				formattedText[index].charAt(0).toLowerCase();
-			setGuesses((prev) => [...prev, isCorrect]);
-			setIndex((prev) => ++prev);
-		}
-	};
-
-	const handleReset = (): void => {
-		setGameState('PENDING');
-		setText('');
-	};
+	}, [context.index, context.targetTextWords, context.currentUuid]);
 
 	return (
-		<ChakraProvider theme={theme}>
-			<Title />
-			<Box textAlign='center' fontSize='xl'>
-				<Box minH='100vh' p={3}>
-					<VStack spacing={8}>
-						<Box minH='10vh'>
-							{hasInvalidParamsError && (
-								<Alert
-									status='error'
-									fontSize='sm'
-									borderRadius='5px'
-									mb={2}
-								>
-									<Flex flex={1}>
-										<AlertIcon />
-										<AlertDescription>
-											Received text in an invalid format.
-										</AlertDescription>
-									</Flex>
-									<CloseButton
-										alignSelf='flex-end'
-										position='relative'
-										right={-1}
-										top={-1}
-										onClick={() =>
+		<AppContext.Provider value={{ value: context, setter: setContext }}>
+			<ChakraProvider theme={theme}>
+				<Title />
+				<Box textAlign='center' fontSize='xl'>
+					<Box minH='100vh' p={3}>
+						<VStack spacing={8}>
+							<Box minH='10vh'>
+								{hasInvalidParamsError && (
+									<InvalidReceiptText
+										onDismiss={() =>
 											setHasInvalidParamsError(false)
 										}
 									/>
-								</Alert>
-							)}
-							<Box fontSize='sm' px='15%'>
-								Enter your desired text into the box. Then,
-								enter the first letter of each word as you
-								remember it. Green means it's right, red means
-								it's wrong. Repeat until you've memorized it!
-							</Box>
-							<Flex align='flex-end' direction='column' mt={4}>
-								{inProgress || completed ? (
-									<ActiveTextarea
-										gameState={gameState}
-										onKeyPress={handleKeyPress}
-									>
-										<TextDisplay
-											text={formattedText}
-											guesses={guesses}
-											index={index}
-										/>
-									</ActiveTextarea>
-								) : (
-									<Textarea
-										onChange={({ target: { value } }) =>
-											handleTextChange(value)
-										}
-										isInvalid={isMaxLength}
-										value={text}
-										placeholder='Four score and seven years ago...'
-										isDisabled={inProgress}
-										maxLength={MAX_LENGTH}
-										color={inProgress ? 'black' : 'current'}
-										bg={inProgress ? 'black' : 'inherit'}
-									/>
 								)}
+								<Box fontSize='sm' px='15%' maxWidth='90vw'>
+									Enter the text you want to memorize in the
+									box. Then type the <i>first letter</i> of
+									each word as you remember it. The text will
+									appear word-by-word. Green means it's right
+									and red means it's wrong. Repeat until
+									you've memorized it!
+								</Box>
 								<Flex
-									my={3}
-									w='100%'
-									justifyContent='space-between'
+									align='flex-end'
+									direction='column'
+									mt={4}
 								>
-									<Box>
-										{isMaxLength && (
-											<Text
-												fontSize='xs'
-												color='gray.400'
-											>
-												Very ambitious, but there's a{' '}
-												{MAX_LENGTH} character limit
-											</Text>
-										)}
-									</Box>
-									{(inProgress || completed) && (
+									{pending ? (
+										<Textarea
+											onChange={({ target: { value } }) =>
+												handleTextChange(value)
+											}
+											isInvalid={isMaxLength}
+											value={context.targetText}
+											placeholder='Four score and seven years ago...'
+											isDisabled={inProgress}
+											maxLength={MAX_LENGTH}
+											color={
+												inProgress ? 'black' : 'current'
+											}
+											bg={
+												inProgress ? 'black' : 'inherit'
+											}
+										/>
+									) : (
+										<ActiveTextarea
+											onKeyPress={handleKeyPress}
+										>
+											<TextDisplay storageKey={key} />
+										</ActiveTextarea>
+									)}
+									<Flex
+										my={2}
+										w='100%'
+										justifyContent='space-between'
+									>
 										<Box>
-											<Button onClick={handleReset}>
-												<Text mr='4px'>Reset</Text>
-												<MdClear />
-											</Button>
-											<Button
-												ml={1}
-												onClick={handleRestart}
-											>
-												<Text mr='4px'>Restart</Text>
-												<HiRefresh />
-											</Button>
-											{text.trim() && (
-												<Share text={text} />
+											{isMaxLength && (
+												<Text
+													fontSize='xs'
+													color='gray.400'
+												>
+													Very ambitious, but there's
+													a {MAX_LENGTH} character
+													limit
+												</Text>
 											)}
 										</Box>
-									)}
-									{pending && (
-										<Box>
-											<Button
-												onClick={handleStart}
-												disabled={
-													inProgress || !text.trim()
-												}
-											>
-												<Text mr='4px'>Start</Text>
-												<GoCheck />
-											</Button>
-											{text.trim() && (
-												<Share text={text} />
-											)}
-										</Box>
-									)}
+										<ActionButtons />
+									</Flex>
 								</Flex>
-								{completed && <Results results={guesses} />}
-							</Flex>
-						</Box>
-						<Box h='16px' w='100%' />
-						<Divider />
-						<InformationalTabset />
-					</VStack>
+							</Box>
+							{hasHistory && <History />}
+							<Box h='16px' w='100%' />
+							<Divider />
+							<InformationalTabset />
+						</VStack>
+					</Box>
 				</Box>
-			</Box>
-		</ChakraProvider>
+			</ChakraProvider>
+		</AppContext.Provider>
 	);
 };

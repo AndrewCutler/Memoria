@@ -3,7 +3,6 @@ import {
 	Divider,
 	Flex,
 	Link,
-	Stack,
 	Tab,
 	TabList,
 	TabPanel,
@@ -30,6 +29,7 @@ const InformationalTabset = (): React.ReactElement => {
 			<TabList>
 				<Tab>About</Tab>
 				<Tab>Tips</Tab>
+				<Tab>Feedback</Tab>
 				<Tab>☕</Tab>
 			</TabList>
 			<TabPanels>
@@ -120,6 +120,7 @@ const InformationalTabset = (): React.ReactElement => {
 						Engage your brain!
 					</Text>
 				</TabPanel>
+				<TabPanel>{/* TODO: implement emailjs */}</TabPanel>
 				<TabPanel>
 					<Box>
 						<Link href='https://ko-fi.com/andrewcutler' isExternal>
