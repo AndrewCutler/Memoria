@@ -5,13 +5,11 @@ import {
 	VStack,
 	Textarea,
 	Flex,
-	Button,
 	extendTheme,
 	Text,
 	Divider
 } from '@chakra-ui/react';
 import ActiveTextarea from './ActiveTextArea/ActiveTextarea';
-import Results from './Results/Results';
 import TextDisplay from './TextDisplay/TextDisplay';
 import Title from './Title/Title';
 import InformationalTabset from './InformationTabset/InformationalTabset';
@@ -35,7 +33,6 @@ export const App = () => {
 		useState<boolean>(false);
 	const [isMaxLength, setIsMaxLength] = useState<boolean>(false);
 	const [hasHistory, setHasHistory] = useState<boolean>(false);
-	const [showHistory, setShowHistory] = useState<boolean>(false);
 	const [key, setKey] = useState<string>('');
 
 	const pending = context.gameState === 'PENDING';
@@ -90,7 +87,7 @@ export const App = () => {
 			...prev,
 			index: 0,
 			guesses: [],
-			targetTextWords: context.targetText.split(/\s+/)
+			targetTextWords: context.targetText.split(/\s+/).filter(Boolean)
 		}));
 	}, [context.targetText]);
 
@@ -111,9 +108,6 @@ export const App = () => {
 			if (target.trim()) {
 				handleTextChange(target);
 			} else {
-				// TODO: this is no longer ever triggered because all values seem to be valid,
-				// but they produce gibberish.
-				// check if valid unicode?
 				setHasInvalidParamsError(true);
 			}
 		}
@@ -146,12 +140,13 @@ export const App = () => {
 										}
 									/>
 								)}
-								<Box fontSize='sm' px='15%'>
-									Enter your desired text into the box. Then,
-									enter the first letter of each word as you
-									remember it. Green means it's right, red
-									means it's wrong. Repeat until you've
-									memorized it!
+								<Box fontSize='sm' px='15%' maxWidth='90vw'>
+									Enter the text you want to memorize in the
+									box. Then type the <i>first letter</i> of
+									each word as you remember it. The text will
+									appear word-by-word. Green means it's right
+									and red means it's wrong. Repeat until
+									you've memorized it!
 								</Box>
 								<Flex
 									align='flex-end'
@@ -183,7 +178,7 @@ export const App = () => {
 										</ActiveTextarea>
 									)}
 									<Flex
-										my={1}
+										my={2}
 										w='100%'
 										justifyContent='space-between'
 									>
@@ -201,26 +196,9 @@ export const App = () => {
 										</Box>
 										<ActionButtons />
 									</Flex>
-									{/* TODO: change to accordion */}
-									{hasHistory && (
-										<Flex
-											my={1}
-											w='100%'
-											justifyContent='flex-end'
-										>
-											<Button
-												onClick={() =>
-													setShowHistory(!showHistory)
-												}
-											>
-												Show history
-											</Button>
-										</Flex>
-									)}
-									{completed && <Results />}
 								</Flex>
 							</Box>
-							{showHistory && <History />}
+							{hasHistory && <History />}
 							<Box h='16px' w='100%' />
 							<Divider />
 							<InformationalTabset />
