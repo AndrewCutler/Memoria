@@ -34,6 +34,7 @@ import {
 } from './App.utility';
 
 export const App = () => {
+	// app state
 	const [context, setContext] = useState<IAppContext>(appContext);
 	const [queryParams, setQueryParams] = useState<URLSearchParams>();
 	const [hasInvalidParamsError, setHasInvalidParamsError] =
@@ -48,6 +49,7 @@ export const App = () => {
 	const inProgress = context.gameState === 'IN PROGRESS';
 	const completed = context.gameState === 'COMPLETE';
 
+	// Chakra theme
 	const theme = extendTheme({
 		fonts: {
 			body: 'Inconsolata, sans-serif'
@@ -61,6 +63,7 @@ export const App = () => {
 		}
 	});
 
+	// event handlers
 	const handleTextChange = (value: string): void => {
 		const isMaxLength = value.length === MAX_LENGTH;
 		setIsMaxLength(isMaxLength);
@@ -70,29 +73,24 @@ export const App = () => {
 		}));
 	};
 
-	const handleStart = (): void => {
-		setCurrentUuid(uuid());
-		setContext((prev) => ({ ...prev, gameState: 'IN PROGRESS' }));
+	const handleKeyPress = (key: string): void => {
+		if (!completed && isValidKestroke(key)) {
+			const isCorrect =
+				key.toLowerCase() ===
+				context.targetTextWords[context.index].charAt(0).toLowerCase();
+			setContext((prev) => ({
+				...prev,
+				index: ++prev.index,
+				guesses: [...prev.guesses, isCorrect]
+			}));
+		}
 	};
 
-	const handleRetry = (): void => {
-		setContext((prev) => ({
-			...prev,
-			index: 0,
-			guesses: [],
-			gameState: 'IN PROGRESS'
-		}));
-	};
-
-	const handleClear = (): void => {
-		// fix this
-		setContext((prev) => ({
-			...prev,
-			targetText: '',
-			gameState: 'PENDING'
-		}));
-		setCurrentUuid('');
-	};
+	// useEffects
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search);
+		setQueryParams(params);
+	}, []);
 
 	useEffect(() => {
 		setContext((prev) => ({
@@ -104,15 +102,10 @@ export const App = () => {
 	}, [context.targetText]);
 
 	useEffect(() => {
-		const params = new URLSearchParams(window.location.search);
-		setQueryParams(params);
-
 		const hasKeysInStorage =
 			Object.keys(localStorage).filter(isStorageKeyMatch)?.length > 0;
 		setHasHistory(hasKeysInStorage);
-	}, []);
 
-	useEffect(() => {
 		if (process.env.NODE_ENV === 'development') {
 			console.log(context);
 		}
@@ -145,25 +138,10 @@ export const App = () => {
 		}
 	}, [context.index, context.targetTextWords, currentUuid]);
 
-	const handleKeyPress = (key: string): void => {
-		if (!completed && isValidKestroke(key)) {
-			const isCorrect =
-				key.toLowerCase() ===
-				context.targetTextWords[context.index].charAt(0).toLowerCase();
-			setContext((prev) => ({
-				...prev,
-				index: ++prev.index,
-				guesses: [...prev.guesses, isCorrect]
-			}));
-		}
-	};
-
 	return (
 		<AppContext.Provider value={{ value: context, setter: setContext }}>
 			<ChakraProvider theme={theme}>
 				<Title />
-				{/* TODO: replace buttons with this component */}
-				{false && <ActionButtons />}
 				<Box textAlign='center' fontSize='xl'>
 					<Box minH='100vh' p={3}>
 						<VStack spacing={8}>
@@ -235,47 +213,7 @@ export const App = () => {
 												</Text>
 											)}
 										</Box>
-										{!pending && (
-											<Box>
-												<Tooltip label='Wipe out this text and try with a new one'>
-													<Button
-														onClick={handleClear}
-													>
-														<Text mr='4px'>
-															Clear
-														</Text>
-														<MdClear />
-													</Button>
-												</Tooltip>
-												<Button
-													ml={1}
-													onClick={handleRetry}
-												>
-													<Text mr='4px'>Retry</Text>
-													<HiRefresh />
-												</Button>
-												{context.targetText.trim() && (
-													<Share />
-												)}
-											</Box>
-										)}
-										{pending && (
-											<Box>
-												<Button
-													onClick={handleStart}
-													disabled={
-														inProgress ||
-														!context.targetText.trim()
-													}
-												>
-													<Text mr='4px'>Start</Text>
-													<GoCheck />
-												</Button>
-												{context.targetText.trim() && (
-													<Share />
-												)}
-											</Box>
-										)}
+										<ActionButtons />
 									</Flex>
 									{completed && <Results />}
 								</Flex>

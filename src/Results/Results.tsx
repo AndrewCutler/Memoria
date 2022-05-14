@@ -12,9 +12,9 @@ const Results = (): React.ReactElement => {
 		const correct = guesses.filter(Boolean).length;
 		const correctPercentage = (correct / guesses.length) * 100;
 		setResultText(
-			`${correct} / ${
-				guesses.length
-			} correct, for a ${correctPercentage.toPrecision(3)}% success rate.`
+			`${correct} / ${guesses.length} (${correctPercentage.toPrecision(
+				3
+			)}%) correct.`
 		);
 	}, [guesses]);
 
