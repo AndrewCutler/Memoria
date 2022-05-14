@@ -113,6 +113,12 @@ export const App = () => {
 	}, []);
 
 	useEffect(() => {
+		if (process.env.NODE_ENV === 'development') {
+			console.log(context);
+		}
+	}, [context]);
+
+	useEffect(() => {
 		const param = queryParams?.get('target');
 		if (param) {
 			const target = decrypt(param);
@@ -128,7 +134,10 @@ export const App = () => {
 	}, [queryParams]);
 
 	useEffect(() => {
-		if (context.index === context.targetTextWords.length) {
+		if (
+			context.index > 0 &&
+			context.index === context.targetTextWords.length
+		) {
 			setContext((prev) => ({ ...prev, gameState: 'COMPLETE' }));
 			const timestamp = new Date().valueOf();
 			const key = `${currentUuid}_${timestamp}`;
@@ -153,7 +162,8 @@ export const App = () => {
 		<AppContext.Provider value={{ value: context, setter: setContext }}>
 			<ChakraProvider theme={theme}>
 				<Title />
-				<ActionButtons />
+				{/* TODO: replace buttons with this component */}
+				{false && <ActionButtons />}
 				<Box textAlign='center' fontSize='xl'>
 					<Box minH='100vh' p={3}>
 						<VStack spacing={8}>
@@ -184,13 +194,7 @@ export const App = () => {
 									direction='column'
 									mt={4}
 								>
-									{inProgress || completed ? (
-										<ActiveTextarea
-											onKeyPress={handleKeyPress}
-										>
-											<TextDisplay storageKey={key} />
-										</ActiveTextarea>
-									) : (
+									{pending ? (
 										<Textarea
 											onChange={({ target: { value } }) =>
 												handleTextChange(value)
@@ -207,6 +211,12 @@ export const App = () => {
 												inProgress ? 'black' : 'inherit'
 											}
 										/>
+									) : (
+										<ActiveTextarea
+											onKeyPress={handleKeyPress}
+										>
+											<TextDisplay storageKey={key} />
+										</ActiveTextarea>
 									)}
 									<Flex
 										my={3}
@@ -225,7 +235,7 @@ export const App = () => {
 												</Text>
 											)}
 										</Box>
-										{(inProgress || completed) && (
+										{!pending && (
 											<Box>
 												<Tooltip label='Wipe out this text and try with a new one'>
 													<Button
