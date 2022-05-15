@@ -2,6 +2,8 @@ import { Box, Button, Flex, Textarea } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
 
+const EMAIL_MAX = 5000;
+
 const Email = (): React.ReactElement => {
 	const form = useRef<any>(null);
 
@@ -30,7 +32,10 @@ const Email = (): React.ReactElement => {
 	};
 
 	return (
-		<Box>
+		<Box textAlign='left'>
+			<Box mb={1} fontSize='sm'>
+				Thoughts? Suggestions? Bugs? Let me know.
+			</Box>
 			<form
 				action=''
 				ref={form}
@@ -38,6 +43,7 @@ const Email = (): React.ReactElement => {
 			>
 				<Textarea
 					value={body}
+					maxLength={EMAIL_MAX}
 					name='message'
 					placeholder='Great site, man!'
 					onChange={({ target: { value } }) => handleChange(value)}
