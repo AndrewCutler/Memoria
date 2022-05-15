@@ -15,16 +15,17 @@ const Email = (): React.ReactElement => {
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
 		event.preventDefault();
-		console.log('submit', form.current);
 		emailjs
 			.sendForm(
-				'service_boun72d',
-				'template_p18c5vn',
+				process.env.REACT_APP_EMAILJS_SERVICEID ?? '',
+				process.env.REACT_APP_EMAILJS_TEMPLATEID ?? '',
 				form.current!,
-				'kd8ThrT5TmcuVT5si'
+				process.env.REACT_APP_EMAILJS_PUBLICKEY ?? ''
 			)
 			.then((response) => {
-				console.log(response);
+				if (response?.status === 200) {
+					// cleanup
+				}
 			})
 			.catch((error) => {
 				console.log(error);
