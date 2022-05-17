@@ -33,29 +33,33 @@ const Email = (): React.ReactElement => {
 	};
 
 	return (
-		<Box textAlign='left'>
+		<Flex alignItems='center' flexDirection='column'>
 			<Box mb={1} fontSize='sm'>
 				Thoughts? Suggestions? Bugs? Let me know.
 			</Box>
-			<form
-				action=''
-				ref={form}
-				onSubmit={(event) => handleSubmit(event)}
-			>
-				<Textarea
-					value={body}
-					maxLength={EMAIL_MAX}
-					name='message'
-					placeholder='Great site, man!'
-					onChange={({ target: { value } }) => handleChange(value)}
-				/>
-				<Flex w='100%' marginTop={2} justifyContent='flex-end'>
-					<Button disabled={!body.trim()} type='submit'>
-						Submit
-					</Button>
-				</Flex>
-			</form>
-		</Box>
+			<Box w='75%'>
+				<form
+					action=''
+					ref={form}
+					onSubmit={(event) => handleSubmit(event)}
+				>
+					<Textarea
+						value={body}
+						maxLength={EMAIL_MAX}
+						name='message'
+						placeholder='Great site, man!'
+						onChange={({ target: { value } }) =>
+							handleChange(value)
+						}
+					/>
+					<Flex w='100%' marginTop={2} justifyContent='flex-end'>
+						<Button disabled={!body.trim()} type='submit'>
+							Submit
+						</Button>
+					</Flex>
+				</form>
+			</Box>
+		</Flex>
 	);
 };
 

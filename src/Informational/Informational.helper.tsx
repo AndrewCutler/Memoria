@@ -1,7 +1,7 @@
 import { Divider, Box, Link, Flex, Text } from '@chakra-ui/react';
 import React from 'react';
 
-export const About = (
+export const About = (): React.ReactElement => (
 	<>
 		<Text>
 			Did you know that memorizing stuff is good for your brain? While
@@ -55,7 +55,7 @@ export const About = (
 	</>
 );
 
-export const Tips = (
+export const Tips = (): React.ReactElement => (
 	<>
 		<Text fontWeight='700' fontSize='md'>
 			<Link
@@ -82,4 +82,13 @@ export const Tips = (
 			Engage your brain!
 		</Text>
 	</>
+);
+
+export const Support = (): React.ReactElement => (
+	<Box>
+		<Link href='https://ko-fi.com/andrewcutler' isExternal>
+			Buy me a coffee?
+		</Link>{' '}
+		❤️
+	</Box>
 );

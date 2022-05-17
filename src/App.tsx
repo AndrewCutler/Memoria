@@ -24,6 +24,7 @@ import {
 	isValidKestroke,
 	MAX_LENGTH
 } from './App.utility';
+import Informational from './Informational/Informational';
 
 export const App = () => {
 	// app state
@@ -199,9 +200,9 @@ export const App = () => {
 								</Flex>
 							</Box>
 							{hasHistory && <History />}
-							<Box h='16px' w='100%' />
-							<Divider />
-							<InformationalTabset />
+							<Divider w='100vw' />
+							{/* <InformationalTabset /> */}
+							<Informational />
 						</VStack>
 					</Box>
 				</Box>

@@ -1,10 +1,36 @@
+import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
-import { About, Tips } from './Informational.helper';
+import { darkModeAlternateGray, lightModeAlternateGray } from '../App.utility';
+import Email from '../Email/Email';
+import { About, Support, Tips } from './Informational.helper';
 
-const sections: string[] = [About, Tips];
+const sections: React.ReactElement[] = [
+	<About />,
+	<Tips />,
+	<Email />,
+	<Support />
+];
 
 const Informational = (): React.ReactElement => {
-	return <div></div>;
+	const alternateColor = useColorModeValue(
+		lightModeAlternateGray,
+		darkModeAlternateGray
+	);
+
+	return (
+		<Flex flexDirection='column' fontSize='sm' w='100vw'>
+			{sections.map((section, index) => (
+				<Box
+					my={2}
+					py={2}
+					px={1}
+					background={index % 2 ? alternateColor : 'inherit'}
+				>
+					{section}
+				</Box>
+			))}
+		</Flex>
+	);
 };
 
 export default Informational;
