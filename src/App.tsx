@@ -12,7 +12,6 @@ import {
 import ActiveTextarea from './ActiveTextArea/ActiveTextarea';
 import TextDisplay from './TextDisplay/TextDisplay';
 import Title from './Title/Title';
-import InformationalTabset from './InformationTabset/InformationalTabset';
 import { decrypt } from './crypt';
 import History, { isStorageKeyMatch } from './History/History';
 import InvalidReceiptText from './InvalidReceiptText/InvalidReceiptText';
@@ -201,7 +200,6 @@ export const App = () => {
 							</Box>
 							{hasHistory && <History />}
 							<Divider w='100vw' />
-							{/* <InformationalTabset /> */}
 							<Informational />
 						</VStack>
 					</Box>
