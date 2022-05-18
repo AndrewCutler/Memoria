@@ -8,12 +8,10 @@ export const About = (): React.ReactElement => (
 			your brain is technically <i>not</i> a muscle, it still likes to be
 			exercised.
 		</Text>
-		<Divider my={2} />
 		<Text>
 			This site was originally created to help memorize Bible verses, but
 			can be used for any structured texts: movie scripts, poetry, lyrics.
 		</Text>
-		<Divider my={2} />
 		<Box>
 			According to the{' '}
 			<Link href='https://www.newadvent.org/summa/3049.htm' isExternal>
@@ -41,7 +39,6 @@ export const About = (): React.ReactElement => (
 				</li>
 			</ul>
 		</Flex>
-		<Divider my={2} />
 		<Box>
 			Above all, like everyhing else in life, the most vital way to
 			improve is with{' '}

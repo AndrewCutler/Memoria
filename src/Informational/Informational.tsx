@@ -20,14 +20,16 @@ const Informational = (): React.ReactElement => {
 	return (
 		<Flex flexDirection='column' fontSize='sm' w='100vw'>
 			{sections.map((section, index) => (
-				<Box
-					my={2}
-					py={2}
-					px={1}
-					background={index % 2 ? alternateColor : 'inherit'}
-				>
-					{section}
-				</Box>
+				<>
+					<Box
+						my={2}
+						py={2}
+						px={1}
+						background={index % 2 ? alternateColor : 'inherit'}
+					>
+						{section}
+					</Box>
+				</>
 			))}
 		</Flex>
 	);

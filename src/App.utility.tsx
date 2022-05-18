@@ -36,4 +36,4 @@ export const AppContext = createContext<IContext>({
 
 export const darkModeAlternateGray = 'gray.600';
 
-export const lightModeAlternateGray = 'gray.200';
+export const lightModeAlternateGray = 'gray.100';
