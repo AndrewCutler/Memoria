@@ -33,3 +33,7 @@ export const AppContext = createContext<IContext>({
 	value: appContext,
 	setter: (value: SetStateAction<IAppContext>) => {}
 });
+
+export const darkModeAlternateGray = 'gray.600';
+
+export const lightModeAlternateGray = 'gray.100';

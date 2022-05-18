@@ -11,10 +11,16 @@ import {
 	AccordionItem,
 	AccordionPanel,
 	Box,
-	AccordionIcon
+	AccordionIcon,
+	useColorModeValue,
+	Flex
 } from '@chakra-ui/react';
 import React, { useContext, useEffect, useState } from 'react';
-import { AppContext } from '../App.utility';
+import {
+	AppContext,
+	darkModeAlternateGray,
+	lightModeAlternateGray
+} from '../App.utility';
 import { IStorageValue } from '../TextDisplay/TextDisplay';
 
 // guid_timestamp
@@ -37,6 +43,10 @@ const History = () => {
 		value: { gameState }
 	} = useContext(AppContext);
 	const [history, setHistory] = useState<KeyedStorageValue[]>([]);
+	const alternateColor = useColorModeValue(
+		lightModeAlternateGray,
+		darkModeAlternateGray
+	);
 
 	useEffect(() => {
 		const matchingKeys: string[] = Object.keys(localStorage)
@@ -59,46 +69,55 @@ const History = () => {
 	}, [gameState]);
 
 	return (
-		<Accordion allowToggle w='80vw'>
-			<AccordionItem>
-				<AccordionButton>
-					<Box textAlign='left' flex='1'>
-						View past attempts
-					</Box>
-					<AccordionIcon />
-				</AccordionButton>
-				<AccordionPanel>
-					<TableContainer
-						fontSize='sm'
-						maxHeight='25vh'
-						overflowY='auto'
-					>
-						<Table variant='simple' size='sm'>
-							<Thead>
-								<Tr>
-									<Th>Accuracy</Th>
-									<Th>Result</Th>
-								</Tr>
-							</Thead>
-							<Tbody>
-								{history.map(({ accuracy, rendered, key }) => {
-									return (
-										<Tr key={key}>
-											<Td>{accuracy}</Td>
-											<Td
-												dangerouslySetInnerHTML={{
-													__html: rendered
-												}}
-											/>
-										</Tr>
-									);
-								})}
-							</Tbody>
-						</Table>
-					</TableContainer>
-				</AccordionPanel>
-			</AccordionItem>
-		</Accordion>
+		<Flex
+			background={alternateColor}
+			w='100vw'
+			py={3}
+			justifyContent='center'
+		>
+			<Accordion allowToggle w='80vw'>
+				<AccordionItem>
+					<AccordionButton>
+						<Box textAlign='left' flex='1'>
+							View past attempts
+						</Box>
+						<AccordionIcon />
+					</AccordionButton>
+					<AccordionPanel>
+						<TableContainer
+							fontSize='sm'
+							maxHeight='25vh'
+							overflowY='auto'
+						>
+							<Table variant='simple' size='sm'>
+								<Thead>
+									<Tr>
+										<Th>Accuracy</Th>
+										<Th>Result</Th>
+									</Tr>
+								</Thead>
+								<Tbody>
+									{history.map(
+										({ accuracy, rendered, key }) => {
+											return (
+												<Tr key={key}>
+													<Td>{accuracy}</Td>
+													<Td
+														dangerouslySetInnerHTML={{
+															__html: rendered
+														}}
+													/>
+												</Tr>
+											);
+										}
+									)}
+								</Tbody>
+							</Table>
+						</TableContainer>
+					</AccordionPanel>
+				</AccordionItem>
+			</Accordion>
+		</Flex>
 	);
 };
 

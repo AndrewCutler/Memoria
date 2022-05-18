@@ -12,7 +12,6 @@ import {
 import ActiveTextarea from './ActiveTextArea/ActiveTextarea';
 import TextDisplay from './TextDisplay/TextDisplay';
 import Title from './Title/Title';
-import InformationalTabset from './InformationTabset/InformationalTabset';
 import { decrypt } from './crypt';
 import History, { isStorageKeyMatch } from './History/History';
 import InvalidReceiptText from './InvalidReceiptText/InvalidReceiptText';
@@ -24,6 +23,7 @@ import {
 	isValidKestroke,
 	MAX_LENGTH
 } from './App.utility';
+import Informational from './Informational/Informational';
 
 export const App = () => {
 	// app state
@@ -199,9 +199,8 @@ export const App = () => {
 								</Flex>
 							</Box>
 							{hasHistory && <History />}
-							<Box h='16px' w='100%' />
-							<Divider />
-							<InformationalTabset />
+							<Divider w='100vw' />
+							<Informational />
 						</VStack>
 					</Box>
 				</Box>
