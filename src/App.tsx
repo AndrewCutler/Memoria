@@ -6,12 +6,11 @@ import {
 	Textarea,
 	Flex,
 	extendTheme,
-	Text,
-	Divider
+	Text
 } from '@chakra-ui/react';
 import ActiveTextarea from './ActiveTextArea/ActiveTextarea';
 import TextDisplay from './TextDisplay/TextDisplay';
-import Title from './Title/Title';
+import Title, { TITLE_HEIGHT_ADJUSTED } from './Title/Title';
 import { decrypt } from './crypt';
 import History, { isStorageKeyMatch } from './History/History';
 import InvalidReceiptText from './InvalidReceiptText/InvalidReceiptText';
@@ -24,6 +23,7 @@ import {
 	MAX_LENGTH
 } from './App.utility';
 import Informational from './Informational/Informational';
+import Texts from './Texts/Texts';
 
 export const App = () => {
 	// app state
@@ -129,10 +129,14 @@ export const App = () => {
 		<AppContext.Provider value={{ value: context, setter: setContext }}>
 			<ChakraProvider theme={theme}>
 				<Title />
-				<Box textAlign='center' fontSize='xl'>
+				<Box textAlign='center' fontSize='xl' overflowX='hidden'>
 					<Box minH='100vh' p={3}>
 						<VStack spacing={8}>
-							<Box minH='10vh'>
+							<Flex
+								height={`calc(100vh - ${TITLE_HEIGHT_ADJUSTED}px)`}
+								flexDirection='column'
+								justifyContent='space-between'
+							>
 								{hasInvalidParamsError && (
 									<InvalidReceiptText
 										onDismiss={() =>
@@ -140,66 +144,75 @@ export const App = () => {
 										}
 									/>
 								)}
-								<Box fontSize='sm' px='15%' maxWidth='90vw'>
-									Enter the text you want to memorize in the
-									box. Then type the <i>first letter</i> of
-									each word as you remember it. The text will
-									appear word-by-word. Green means it's right
-									and red means it's wrong. Repeat until
-									you've memorized it!
-								</Box>
-								<Flex
-									align='flex-end'
-									direction='column'
-									mt={4}
-								>
-									{pending ? (
-										<Textarea
-											onChange={({ target: { value } }) =>
-												handleTextChange(value)
-											}
-											isInvalid={isMaxLength}
-											value={context.targetText}
-											placeholder='Four score and seven years ago...'
-											isDisabled={inProgress}
-											maxLength={MAX_LENGTH}
-											color={
-												inProgress ? 'black' : 'current'
-											}
-											bg={
-												inProgress ? 'black' : 'inherit'
-											}
-										/>
-									) : (
-										<ActiveTextarea
-											onKeyPress={handleKeyPress}
-										>
-											<TextDisplay storageKey={key} />
-										</ActiveTextarea>
-									)}
+								<Box fontSize='sm' px='15%'>
+									<Box>
+										Enter the text you want to memorize in
+										the box. Then type the{' '}
+										<i>first letter</i> of each word as you
+										remember it. The text will appear
+										word-by-word. Green means it's right and
+										red means it's wrong. Repeat until
+										you've memorized it!
+									</Box>
 									<Flex
-										my={2}
-										w='100%'
-										justifyContent='space-between'
+										align='flex-end'
+										direction='column'
+										mt={4}
+										px='10%'
 									>
-										<Box>
-											{isMaxLength && (
-												<Text
-													fontSize='xs'
-													color='gray.400'
-												>
-													Very ambitious, but there's
-													a {MAX_LENGTH} character
-													limit
-												</Text>
-											)}
-										</Box>
-										<ActionButtons />
+										{pending ? (
+											<Textarea
+												onChange={({
+													target: { value }
+												}) => handleTextChange(value)}
+												isInvalid={isMaxLength}
+												value={context.targetText}
+												placeholder='Four score and seven years ago...'
+												isDisabled={inProgress}
+												maxLength={MAX_LENGTH}
+												h='40vh'
+												color={
+													inProgress
+														? 'black'
+														: 'current'
+												}
+												bg={
+													inProgress
+														? 'black'
+														: 'inherit'
+												}
+											/>
+										) : (
+											<ActiveTextarea
+												onKeyPress={handleKeyPress}
+											>
+												<TextDisplay storageKey={key} />
+											</ActiveTextarea>
+										)}
+										<Flex
+											my={2}
+											w='100%'
+											justifyContent='space-between'
+										>
+											<Box>
+												{isMaxLength && (
+													<Text
+														fontSize='xs'
+														color='gray.400'
+													>
+														Very ambitious, but
+														there's a {MAX_LENGTH}{' '}
+														character limit
+													</Text>
+												)}
+											</Box>
+											<ActionButtons />
+										</Flex>
 									</Flex>
-								</Flex>
-							</Box>
-							{hasHistory && <History />}
-							<Divider w='100vw' />
+								</Box>
+								{hasHistory && <History />}
+							</Flex>
+							<Texts />
 							<Informational />
 						</VStack>
 					</Box>

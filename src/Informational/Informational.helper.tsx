@@ -53,7 +53,7 @@ export const About = (): React.ReactElement => (
 );
 
 export const Tips = (): React.ReactElement => (
-	<>
+	<Box py={10}>
 		<Text fontWeight='700' fontSize='md'>
 			<Link
 				href='https://www.brainscape.com/academy/why-rote-memorization-is-more-important-than-you-think/'
@@ -78,11 +78,11 @@ export const Tips = (): React.ReactElement => (
 			</strong>{' '}
 			Engage your brain!
 		</Text>
-	</>
+	</Box>
 );
 
 export const Support = (): React.ReactElement => (
-	<Box>
+	<Box mb={0}>
 		<Link href='https://ko-fi.com/andrewcutler' isExternal>
 			Buy me a coffee?
 		</Link>{' '}

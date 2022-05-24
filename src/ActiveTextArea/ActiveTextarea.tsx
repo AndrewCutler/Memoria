@@ -40,7 +40,7 @@ const HiddenTextarea = ({
 	}, [gameState]);
 
 	return (
-		<>
+		<Box h='40vh' w='100%'>
 			<Flex w='100%'>
 				<Input
 					ref={elRef}
@@ -56,7 +56,7 @@ const HiddenTextarea = ({
 				textAlign='start'
 				py='8px'
 				px='16px'
-				minH='80px'
+				h={`calc(100% - 56px)`}
 				overflow='auto'
 				borderRadius={5}
 				fontSize='var(--chakra-fontSizes-md)'
@@ -69,7 +69,7 @@ const HiddenTextarea = ({
 			>
 				{children}
 			</Box>
-		</>
+		</Box>
 	);
 };
 
