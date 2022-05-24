@@ -24,6 +24,7 @@ import {
 } from './App.utility';
 import Informational from './Informational/Informational';
 import Texts from './Texts/Texts';
+import Footer from './Footer/Footer';
 
 export const App = () => {
 	// app state
@@ -222,6 +223,7 @@ export const App = () => {
 						</VStack>
 					</Box>
 				</Box>
+				<Footer />
 			</ChakraProvider>
 		</AppContext.Provider>
 	);
