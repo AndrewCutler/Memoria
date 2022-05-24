@@ -23,6 +23,7 @@ import {
 	MAX_LENGTH
 } from './App.utility';
 import Informational from './Informational/Informational';
+import Texts from './Texts/Texts';
 
 export const App = () => {
 	// app state
@@ -211,6 +212,7 @@ export const App = () => {
 								</Box>
 								{hasHistory && <History />}
 							</Flex>
+							<Texts />
 							<Informational />
 						</VStack>
 					</Box>
