@@ -129,7 +129,12 @@ export const App = () => {
 		<AppContext.Provider value={{ value: context, setter: setContext }}>
 			<ChakraProvider theme={theme}>
 				<Title />
-				<Box textAlign='center' fontSize='xl' overflowX='hidden'>
+				<Box
+					textAlign='center'
+					fontSize='xl'
+					overflowX='hidden'
+					lineHeight={2.25}
+				>
 					<Box minH='100vh' p={3}>
 						<VStack spacing={8}>
 							<Flex

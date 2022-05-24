@@ -72,6 +72,10 @@ const History = () => {
 		<Flex
 			background={alternateColor}
 			w='100vw'
+			borderTop='1px solid'
+			borderTopColor='white.600'
+			borderBottom='1px solid'
+			borderBottomColor='white.600'
 			py={3}
 			justifyContent='center'
 		>

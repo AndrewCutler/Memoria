@@ -26,10 +26,11 @@ const Informational = (): React.ReactElement => {
 		>
 			{sections.map((section, index) => (
 				<Box
-					mt={5}
 					key={index}
 					py={10}
 					px={1}
+					borderTop={`1px solid ${index % 2 ? 'white.600' : ''}`}
+					borderBottom={`1px solid ${index % 2 ? 'white.600' : ''}`}
 					background={index % 2 ? 'inherit' : alternateColor}
 				>
 					{section}

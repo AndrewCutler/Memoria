@@ -53,7 +53,7 @@ export const About = (): React.ReactElement => (
 );
 
 export const Tips = (): React.ReactElement => (
-	<Box py={10}>
+	<Box>
 		<Text fontWeight='700' fontSize='md'>
 			<Link
 				href='https://www.brainscape.com/academy/why-rote-memorization-is-more-important-than-you-think/'
